@@ -85,17 +85,18 @@ void PlayGame()
 	{
 		
 		
-		while(!start && stop)
+		while(stop)
 		{
 			LED_Off(3);
 		}
 		LED_On(3);
 		
-		if(c == 10000000)
+		if(c == 100)
 		{
 			c = 0;
 			reset = 1;
-			while(start == 0 && reset == 1)
+			start = 0;
+			while(start == 0)
 			{
 				LED_On(4);
 				PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', White, Black);
@@ -108,7 +109,7 @@ void PlayGame()
 				PutChar(MAX_X/2 + 20, MAX_Y / 2, 'e', White, Black);
 			}
 		}
-		
+		c++;
 		LED_Off(4);
 		
 	}

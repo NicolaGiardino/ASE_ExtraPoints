@@ -83,9 +83,12 @@ void RIT_IRQHandler (void)
 			key1++;
 		}
 		else {	/* button released */
-			key1=0;			
-			//NVIC_EnableIRQ(EINT1_IRQn);							 /* enable Button interrupts			*/
-			//LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
+			key1=0;	
+			if(!start)
+			{
+				NVIC_EnableIRQ(EINT1_IRQn);							 /* enable Button interrupts			*/
+				LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
+			}
 			disable_RIT();
 		}
 	}
@@ -105,7 +108,6 @@ void RIT_IRQHandler (void)
 						{
 							case 0: 
 								stop = 1;
-								start = 0;
 								NVIC_DisableIRQ(EINT0_IRQn);		/* disable Button interrupts			 */
 								LPC_PINCON->PINSEL4    &= ~(1 << 20);     /* GPIO pin selection */
 								LED_On(2);
