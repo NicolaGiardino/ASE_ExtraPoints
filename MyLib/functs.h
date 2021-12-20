@@ -6,10 +6,10 @@
 #include "../adc/adc.h"
 
 uint32_t ASCIItoUnsig(uint8_t *str, uint32_t size);
-void InitBall();
-void MoveBall();
-void GameLost();
+void InitBall(void);
+void MoveBall(void);
+void GameLost(void);
 void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, uint16_t bkColor);
-void PlayGame();
-void GameLost();
-void DrawLateralLines();
+void PlayGame(void);
+void GameLost(void);
+void DrawLateralLines(void);

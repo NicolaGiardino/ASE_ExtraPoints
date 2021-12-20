@@ -40,7 +40,6 @@ extern uint16_t adc_Xposition, adc_Yposition;
  *----------------------------------------------------------------------------*/
 int main (void) 
 {
-  unsigned int c = 0;
 	size_t i;
 	SystemInit();  												/* System Initialization (i.e., PLL)  */
 	
@@ -60,7 +59,7 @@ int main (void)
 	NVIC_SetPriority(ADC_IRQn, 3);
 	init_RIT(0x004C4B40);									/* RIT Initialization 50 msec       	*/
 	enable_RIT();													/* RIT enabled												*/
-	
+	score += 100;
 	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= ~(0x2);	
@@ -69,7 +68,8 @@ int main (void)
 	LPC_PINCON->PINSEL1 &= ~(1<<20);
 	LPC_GPIO0->FIODIR |= (1<<26);
 	
-  while (!start) { 
+  while (!start) 
+	{ 
 		
 		__ASM("wfi");
 		

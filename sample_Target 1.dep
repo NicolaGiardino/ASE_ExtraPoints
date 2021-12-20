@@ -1,8 +1,8 @@
 Dependencies for Project 'sample', Target 'Target 1': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
 F (.\startup_LPC17xx.s)(0x61BCB7E5)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include--pd "__UVISION_VERSION SETA 536" --pd "_RTE_ SETA 1" --pd "LPC175x_6x SETA 1" --pd "_RTE_ SETA 1"--list .\startup_lpc17xx.lst --xref -o .\startup_lpc17xx.o --depend .\startup_lpc17xx.d)
-F (.\sample.c)(0x61C0BF74)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\sample.o --omf_browse .\sample.crf --depend .\sample.d)
-I (MyLib/functs.h)(0x61C0A9CA)
+F (.\sample.c)(0x61C0D252)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\sample.o --omf_browse .\sample.crf --depend .\sample.d)
+I (MyLib/functs.h)(0x61C0D24A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x602585E4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.H)(0x5E1DC4B4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D44B52)
@@ -15,7 +15,7 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\
 I (MyLib/../GLCD/GLCD.h)(0x5E1315E3)
 I (MyLib/../TouchPanel/TouchPanel.h)(0x5E131400)
 I (MyLib/../led/led.h)(0x5FD98676)
-I (MyLib/../adc/adc.h)(0x61C061DB)
+I (MyLib/../adc/adc.h)(0x61C0D28E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)
 I (led/led.h)(0x5FD98676)
 I (button_EXINT/button.h)(0x61B0DC90)
@@ -130,7 +130,7 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\
 I (RIT\RIT.h)(0x61B0DC90)
 I (RIT\../led/led.h)(0x5FD98676)
 I (RIT\../timer/timer.h)(0x5FD98676)
-I (RIT\../adc/adc.h)(0x61C061DB)
+I (RIT\../adc/adc.h)(0x61C0D28E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)
 F (.\RIT\lib_RIT.c)(0x61B0DC90)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\lib_rit.o --omf_browse .\lib_rit.crf --depend .\lib_rit.d)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\lpc17xx.h)(0x5E1DC4B4)
@@ -155,9 +155,9 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cms
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D44B52)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x58493F92)
 I (TouchPanel\../TouchPanel/TouchPanel.h)(0x5E131400)
-F (.\MyLib\functs.h)(0x61C0A9CA)()
-F (.\MyLib\functs.c)(0x61C0C73A)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\functs.o --omf_browse .\functs.crf --depend .\functs.d)
-I (MyLib\functs.h)(0x61C0A9CA)
+F (.\MyLib\functs.h)(0x61C0D24A)()
+F (.\MyLib\functs.c)(0x61C0D291)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\functs.o --omf_browse .\functs.crf --depend .\functs.d)
+I (MyLib\functs.h)(0x61C0D24A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x602585E4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.H)(0x5E1DC4B4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D44B52)
@@ -170,9 +170,9 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\
 I (MyLib\../GLCD/GLCD.h)(0x5E1315E3)
 I (MyLib\../TouchPanel/TouchPanel.h)(0x5E131400)
 I (MyLib\../led/led.h)(0x5FD98676)
-I (MyLib\../adc/adc.h)(0x61C061DB)
+I (MyLib\../adc/adc.h)(0x61C0D28E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)
-F (.\adc\adc.h)(0x61C061DB)()
+F (.\adc\adc.h)(0x61C0D28E)()
 F (.\adc\IRQ_adc.c)(0x61C06993)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\irq_adc.o --omf_browse .\irq_adc.crf --depend .\irq_adc.d)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\lpc17xx.h)(0x5E1DC4B4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\core_cm3.h)(0x60D44B52)
@@ -182,7 +182,7 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cms
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armcc.h)(0x60D44B52)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D44B52)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x58493F92)
-I (adc\adc.h)(0x61C061DB)
+I (adc\adc.h)(0x61C0D28E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)
 I (adc\../led/led.h)(0x5FD98676)
 I (adc\../TouchPanel/TouchPanel.h)(0x5E131400)
@@ -196,5 +196,5 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cms
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armcc.h)(0x60D44B52)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h)(0x60D44B52)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x58493F92)
-I (adc\adc.h)(0x61C061DB)
+I (adc\adc.h)(0x61C0D28E)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)

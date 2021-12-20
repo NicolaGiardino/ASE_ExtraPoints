@@ -43,7 +43,7 @@ void DrawLateralLines()
 
 void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, uint16_t bkColor)
 {
-		uint8_t ascii[8];
+		char ascii[8];
 		sprintf(ascii,"%d",score);
 		if(number < 10)
 		{
@@ -85,23 +85,9 @@ uint32_t upow(uint32_t base, uint32_t exp)
     return result;
 }
 
-uint32_t ASCIItoUnsig(uint8_t *str, uint32_t size)
-{
-	size_t i;
-	uint32_t num = 0;
-	for(i = 0; i < size; i++)
-	{
-		if(str[i] > 47 && str[i] < 58)
-		{
-				num += (uint32_t)(str[i] - 48) * upow(10, i);
-		}
-	}
-	
-}
-
 void IncrementScore()
 {
-	if(score > 100)
+	if(score >= 100)
 	{
 		score += 10;
 		record = score;
@@ -135,6 +121,8 @@ void MoveBall()
 {
 		
 	  static uint16_t x_new, y_new;
+		static uint16_t factor = 100;
+		static int speed;
 		size_t i;
 		/* Delete previous ball */
 		for(i = 0; i < 5; i++)
@@ -146,12 +134,6 @@ void MoveBall()
 		{
 			LCD_DrawLine(ball_Xpos - 4, ball_Ypos - i, ball_Xpos, ball_Ypos - i,Green);
 		}
-		/* This is for debugging the ball functioning 
-		x_old = ball_Xpos;
-		y_old = ball_Ypos;
-		ball_Xpos -=1;
-		ball_Ypos +=1;
-		*/
 		
 		/* Calculate next position */
 		if(ball_Xpos == MAX_BALLX || (ball_Xpos - 4) == MIN_BALLX || 
@@ -190,8 +172,13 @@ void MoveBall()
 		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40))) /* Case 4 IF1 && IF2*/ 
 		{
 			/* Speed to be implemented */
-			x_new = 2 * ball_Xpos - x_old;
-			y_new = y_old;
+			speed = (int)((x_new - x_old) / 2);
+			if(speed < 0)
+			{
+				speed = -1/speed;
+			}
+			x_new = (2 * ball_Xpos - x_old) * (uint16_t)speed / factor;
+			y_new = y_old * (uint16_t)speed / factor;
 			IncrementScore();
 			LPC_DAC->DACR = 700<<6;
 		}
@@ -218,6 +205,8 @@ void GameLost()
 			start = 0;
 			score = 0;
 			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+			PutChar(15, MAX_Y / 2, ' ', Black, Black);
+			PutChar(24, MAX_Y / 2, ' ', Black, Black);
 			LED_On(4);
 			InitBall();
 			PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', White, Black);
@@ -242,7 +231,6 @@ void GameLost()
 
 void PlayGame()
 {
-	int c = 0;
 	while(1)
 	{
 		
