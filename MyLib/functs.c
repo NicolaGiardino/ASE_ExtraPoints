@@ -177,7 +177,6 @@ void MoveBall()
 		
 	  static uint16_t x_new, y_new;
 		static uint16_t adc_Xold;
-		static uint16_t factor = 100;
 		static int speed;
 		size_t i;
 		/* Delete previous ball */
@@ -192,12 +191,12 @@ void MoveBall()
 		}
 		
 		/* Calculate next position */
-		if(ball_Xpos == MAX_BALLX || (ball_Xpos - 4) == MIN_BALLX || 
+		if(ball_Xpos >= MAX_BALLX || (ball_Xpos - 4) <= MIN_BALLX || 
 			((ball_Ypos < (adc_Yposition - 4 && (ball_Ypos - 4) > adc_Yposition)) 
 			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition)))
 		{
 			/* If the ball's in one of the two top edges */
-			if(ball_Ypos == MIN_BALLY)
+			if(ball_Ypos <= MIN_BALLY)
 			{
 				x_new = x_old;
 				y_new = y_old;
@@ -218,9 +217,8 @@ void MoveBall()
 				y_new = 2 * ball_Ypos - y_old;
 				LPC_DAC->DACR = 400<<6;
 			}
-			
 		}
-		else if(ball_Ypos == MIN_BALLY)
+		else if(ball_Ypos <= MIN_BALLY)
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = y_old;
@@ -234,13 +232,26 @@ void MoveBall()
 			 * calculated using its previous and next position 
 			 * divided by a factor of 100
 			 */
-			speed = (int)((adc_Xposition - adc_Xold) / 2);
-			if(speed < 0)
+			speed = (int)(adc_Xposition - adc_Xold);
+			x_new = (2 * ball_Xpos - x_old);
+			y_new = y_old;
+			
+			if((int)(ball_Xpos - x_old) < 0)
 			{
-				speed = -1/speed;
+				y_new = (y_new - 1 == y_old) ? y_new : y_new - 1;
 			}
-			x_new = (2 * ball_Xpos - x_old) * (uint16_t)speed / factor;
-			y_new = y_old * (uint16_t)speed / factor;
+			else if((int)(ball_Xpos - x_old) > 0)
+			{
+				if(speed > 0)
+				{
+					x_new = (x_new + 1 == x_old) ? x_new : x_new + 1;
+				}
+				else
+				{
+					x_new = (x_new - 1 == x_old) ? x_new : x_new - 1;
+				}
+			}
+			
 			IncrementScore();
 			LPC_DAC->DACR = 700<<6;
 		}
@@ -251,6 +262,18 @@ void MoveBall()
 			y_new = 2 * ball_Ypos - y_old;
 			LPC_DAC->DACR = 0;
 		}
+		
+		/* Just to be sure that the number is still visible */
+		if(ball_Xpos < 27 && (ball_Ypos < MAX_Y / 2 && ball_Xpos > MAX_Y / 2 + 9))
+		{
+			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+		}
+		/* Just to keep the integrity of the game environment */
+		if(x_old <= MIN_BALLX || x_old >= MAX_BALLX || y_old - 4 < MIN_BALLY)
+		{
+			DrawLateralLines();
+		}
+		
 		/* Update the values */
 		x_old = ball_Xpos;
 		y_old = ball_Ypos;
@@ -300,6 +323,7 @@ void GameLost()
 			{}
 			LCD_Clear(Black);
 			score = 0;
+			DrawLateralLines();
 			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 			InitBall();
 }
@@ -329,7 +353,6 @@ void PlayGame()
 		ADC_start_conversion();
 		MoveBall();
 		
-		LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 		
 	}
 	
