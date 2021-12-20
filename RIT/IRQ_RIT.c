@@ -11,6 +11,7 @@
 #include "RIT.h"
 #include "../led/led.h"
 #include "../timer/timer.h"
+#include "../adc/adc.h"
 
 /******************************************************************************
 ** Function name:		RIT_IRQHandler
@@ -47,6 +48,8 @@ void RIT_IRQHandler (void)
 						if(reset == 1 && start == 0)
 						{
 								reset = 0;
+								NVIC_EnableIRQ(EINT1_IRQn);							 /* enable Button interrupts			*/
+								LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
 						}
 						break;
 				default:
@@ -75,6 +78,7 @@ void RIT_IRQHandler (void)
 						if(reset != 1)
 						{
 							start = 1;
+							ADC_init();
 						}
 					break;
 				default:
@@ -110,12 +114,14 @@ void RIT_IRQHandler (void)
 								stop = 1;
 								NVIC_DisableIRQ(EINT0_IRQn);		/* disable Button interrupts			 */
 								LPC_PINCON->PINSEL4    &= ~(1 << 20);     /* GPIO pin selection */
+							  NVIC_DisableIRQ(ADC_IRQn);
 								LED_On(2);
 								LED_Off(1);
 								break;
 							case 1:
 								stop = 0;
 								NVIC_EnableIRQ(EINT0_IRQn);							 /* enable Button interrupts			*/
+								NVIC_EnableIRQ(ADC_IRQn);
 								LPC_PINCON->PINSEL4    |= (1 << 20);     /* External interrupt int0 pin selection */
 								LED_Off(2);
 								LED_On(1);

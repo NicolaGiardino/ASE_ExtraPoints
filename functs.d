@@ -12,3 +12,5 @@
 .\functs.o: MyLib\../GLCD/GLCD.h
 .\functs.o: MyLib\../TouchPanel/TouchPanel.h
 .\functs.o: MyLib\../led/led.h
+.\functs.o: MyLib\../adc/adc.h
+.\functs.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

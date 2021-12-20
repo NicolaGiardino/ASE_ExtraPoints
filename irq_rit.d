@@ -10,3 +10,5 @@
 .\irq_rit.o: RIT\RIT.h
 .\irq_rit.o: RIT\../led/led.h
 .\irq_rit.o: RIT\../timer/timer.h
+.\irq_rit.o: RIT\../adc/adc.h
+.\irq_rit.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

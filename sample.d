@@ -12,6 +12,8 @@
 .\sample.o: MyLib/../GLCD/GLCD.h
 .\sample.o: MyLib/../TouchPanel/TouchPanel.h
 .\sample.o: MyLib/../led/led.h
+.\sample.o: MyLib/../adc/adc.h
+.\sample.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\sample.o: led/led.h
 .\sample.o: button_EXINT/button.h
 .\sample.o: timer/timer.h
