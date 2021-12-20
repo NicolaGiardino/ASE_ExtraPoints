@@ -27,9 +27,24 @@ unsigned short AD_last = 0xFF;     /* Last converted value               */
 uint16_t adc_Xposition = MAX_X / 2 - 20;
 uint16_t adc_Yposition = MAX_Y - 33;
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: MovePotentiometer                                              *
+*                                                                               *
+* PURPOSE: Function to move the paddle, 																				*
+*						based on the current ADC position																		*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void MovePotentiometer()
 {
 	size_t i;
+	/* The paddle goes from where the potentiometer is: [-  ] to [  -], clockwise */
 	if(AD_current < MIN_PADDLE)
 	{
 		adc_Xposition = 6;
@@ -50,12 +65,12 @@ void MovePotentiometer()
 	}
 }
 
+
 void ADC_IRQHandler(void) {
   	
-  AD_current = ((LPC_ADC->ADGDR>>4) & 0xFFF);/* Read Conversion Result             */
-  if(AD_current != AD_last){
-		//LED_Off(AD_last*7/0xFFF);	  // ad_last : AD_max = x : 7 		LED_Off((AD_last*7/0xFFF));	
-		//LED_On(AD_current*7/0xFFF);	// ad_current : AD_max = x : 7 		LED_On((AD_current*7/0xFFF));
+  AD_current = ((LPC_ADC->ADGDR>>4) & 0xFFF);/* Read Conversion Result */
+  if(AD_current != AD_last)
+	{
 		AD_last = AD_current;
 		MovePotentiometer();
   }	

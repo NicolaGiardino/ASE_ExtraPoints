@@ -1,34 +1,47 @@
 #include "functs.h"
 
+/* Potentiometer edge positions */
 #define MAX_POT MAX_X - 6
 #define MIN_POT 6
 
+/* Ball edge positions on both axis */
 #define MAX_BALLX MAX_X - 6
 #define MIN_BALLX 6
 
 #define MIN_BALLY 6
 #define MAX_BALLY MAX_Y - 33
 
+/* Defined in the RIT timer library */
 extern int start, reset, stop;
+
+/* Defined in the adc library */
 extern uint16_t adc_Xposition, adc_Yposition;
 
+/* Old position of the ball */
 uint16_t x_old = MAX_X - 6;
 uint16_t y_old = MAX_Y / 2;
 
-int score = 0;
-int record = 100;
+/* Actual position of the ball */
 uint16_t ball_Xpos;
 uint16_t ball_Ypos;
 
-uint16_t SinTable[45] =                                       /*                      */
-{
-    410, 467, 523, 576, 627, 673, 714, 749, 778,
-    799, 813, 819, 817, 807, 789, 764, 732, 694, 
-    650, 602, 550, 495, 438, 381, 324, 270, 217,
-    169, 125, 87 , 55 , 30 , 12 , 2  , 0  , 6  ,   
-    20 , 41 , 70 , 105, 146, 193, 243, 297, 353
-};
+int score = 0;
+int record = 100;
 
+
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: DrawLateralLines                                               *
+*                                                                               *
+* PURPOSE: Draw the red lateral lines																						*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void DrawLateralLines()
 {
 	size_t i;
@@ -41,6 +54,24 @@ void DrawLateralLines()
 	}
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: LCD_PutInt				                                              *
+*                                                                               *
+* PURPOSE: Print a number on the LCD																						*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+* Xpos			uint16_t		 I			Initial X position															*
+*	Ypos			uint16_t		 I			Initial Y position															*
+*	number		int					 I			Number to print on the LCD											*
+*	charColor	uint16_t		 I			Color to print the number												*
+*	bkColor		uint16_t		 I			Color to print the background										*
+*																																								*
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, uint16_t bkColor)
 {
 		char ascii[8];
@@ -49,18 +80,18 @@ void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, ui
 		{
 			PutChar(Xpos, Ypos, ascii[0], charColor, bkColor);
 		}
-		else if(number >= 10 && number < 100)
+		else if(number < 100)
 		{
 			PutChar(Xpos, Ypos, ascii[0], charColor, bkColor);
 			PutChar(Xpos + 9, Ypos, ascii[1], charColor, bkColor);
 		}
-		else if(number >= 100 && number < 1000)
+		else if(number < 1000)
 		{
 			PutChar(Xpos, Ypos, ascii[0], charColor, bkColor);
 			PutChar(Xpos + 9, Ypos, ascii[1], charColor, bkColor);
 			PutChar(Xpos + 18, Ypos, ascii[2], charColor, bkColor);
 		}
-		else if(number >= 1000 && number < 10000)
+		else if(number < 10000)
 		{
 			PutChar(Xpos, Ypos, ascii[0], charColor, bkColor);
 			PutChar(Xpos + 9, Ypos, ascii[1], charColor, bkColor);
@@ -69,22 +100,19 @@ void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, ui
 		}
 }
 
-uint32_t upow(uint32_t base, uint32_t exp)
-{
-    int result = 1;
-    for (;;)
-    {
-        if (exp & 1)
-            result *= base;
-        exp >>= 1;
-        if (!exp)
-            break;
-        base *= base;
-    }
-
-    return result;
-}
-
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: IncrementScore		                                              *
+*                                                                               *
+* PURPOSE: Increment the score of the game																			*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void IncrementScore()
 {
 	if(score >= 100)
@@ -98,6 +126,19 @@ void IncrementScore()
 	}
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: InitBall					                                              *
+*                                                                               *
+* PURPOSE: Initialize the ball's position																				*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void InitBall()
 {
 		size_t i;
@@ -117,10 +158,25 @@ void InitBall()
 		ball_Ypos +=1;
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: MoveBall					                                              *
+*                                                                               *
+* PURPOSE: Function to calculate the next ball's position based on							*
+*						where the current position is																				*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void MoveBall()
 {
 		
 	  static uint16_t x_new, y_new;
+		static uint16_t adc_Xold;
 		static uint16_t factor = 100;
 		static int speed;
 		size_t i;
@@ -138,22 +194,24 @@ void MoveBall()
 		/* Calculate next position */
 		if(ball_Xpos == MAX_BALLX || (ball_Xpos - 4) == MIN_BALLX || 
 			((ball_Ypos < (adc_Yposition - 4 && (ball_Ypos - 4) > adc_Yposition)) 
-			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition))) /* Case 0 && 1 && 2 && 6(IF3 IF4)*/
+			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition)))
 		{
+			/* If the ball's in one of the two top edges */
 			if(ball_Ypos == MIN_BALLY)
 			{
 				x_new = x_old;
 				y_new = y_old;
 				LPC_DAC->DACR = 400;
 			}
-			else if(ball_Xpos == adc_Xposition && (ball_Ypos == (adc_Yposition - 4 || (ball_Ypos - 4) == adc_Yposition))) 
-				/* Case angle and IF3 - 4 cases */
+			/* If the ball is on one of the two potentiometer top angles */
+			else if(ball_Xpos == adc_Xposition && (ball_Ypos == (adc_Yposition - 4 || (ball_Ypos - 4) == adc_Yposition)))
 			{
 				x_new = x_old;
 				y_new = y_old;
 				IncrementScore();
 				LPC_DAC->DACR = 700<<6;
 			}
+			/* If the ball's on one of the two lateral walls or on the side of the paddle*/
 			else
 			{
 				x_new = x_old;
@@ -162,17 +220,21 @@ void MoveBall()
 			}
 			
 		}
-		else if(ball_Ypos == MIN_BALLY) /* Case 3 */
+		else if(ball_Ypos == MIN_BALLY)
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = y_old;
 			/* Low pitch tone */
 			LPC_DAC->DACR = 400<<6;
 		}
-		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40))) /* Case 4 IF1 && IF2*/ 
+		/* if the ball is touching the top of the paddle */
+		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
 		{
-			/* Speed to be implemented */
-			speed = (int)((x_new - x_old) / 2);
+			/* The next position varies on the speed of the paddle, 
+			 * calculated using its previous and next position 
+			 * divided by a factor of 100
+			 */
+			speed = (int)((adc_Xposition - adc_Xold) / 2);
 			if(speed < 0)
 			{
 				speed = -1/speed;
@@ -182,33 +244,50 @@ void MoveBall()
 			IncrementScore();
 			LPC_DAC->DACR = 700<<6;
 		}
-		else /* Case 0 */
+		/* In each other case, when the ball is in the middle of the display */
+		else
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = 2 * ball_Ypos - y_old;
 			LPC_DAC->DACR = 0;
 		}
+		/* Update the values */
 		x_old = ball_Xpos;
 		y_old = ball_Ypos;
 		ball_Xpos = x_new;
 		ball_Ypos = y_new;
-		if(ball_Ypos > MAX_BALLY)	/* Case 5 */
+		adc_Xold = adc_Xposition;
+		
+		/* If the position is lower than the end of the paddle, than it's game over */
+		if(ball_Ypos - 4 > MAX_BALLY)
 		{
-			/* Here it fails */
 			GameLost();
 		}
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: GameLost					                                              *
+*                                                                               *
+* PURPOSE: Function to be called when the game is lost,													*
+*						that's when the ball goes below the paddle													*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void GameLost()
 {
+			/* Put reset to 1 and start to zero, 
+			 * then print the losing message
+			 * finally wait for the start button to be pushed,
+			 * resetting the game
+			 */
 			reset = 1;
 			start = 0;
-			score = 0;
-			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
-			PutChar(15, MAX_Y / 2, ' ', Black, Black);
-			PutChar(24, MAX_Y / 2, ' ', Black, Black);
-			LED_On(4);
-			InitBall();
 			PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', White, Black);
 			PutChar(MAX_X/2 - 40, MAX_Y / 2, 'o', White, Black);
 			PutChar(MAX_X/2 - 30, MAX_Y / 2, 'u', White, Black);
@@ -219,22 +298,31 @@ void GameLost()
 			PutChar(MAX_X/2 + 20, MAX_Y / 2, 'e', White, Black);
 			while(start == 0)
 			{}
-			PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', Black, Black);
-			PutChar(MAX_X/2 - 40, MAX_Y / 2, 'o', Black, Black);
-			PutChar(MAX_X/2 - 30, MAX_Y / 2, 'u', Black, Black);
-			PutChar(MAX_X/2 - 20, MAX_Y / 2, ' ', Black, Black);
-			PutChar(MAX_X/2 - 10, MAX_Y / 2, 'L', Black, Black);
-			PutChar(MAX_X/2, MAX_Y / 2, 'o', Black, Black);
-			PutChar(MAX_X/2 + 10, MAX_Y / 2, 's', Black, Black);
-			PutChar(MAX_X/2 + 20, MAX_Y / 2, 'e', Black, Black);
+			LCD_Clear(Black);
+			score = 0;
+			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+			InitBall();
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: PlayGame					                                              *
+*                                                                               *
+* PURPOSE: Main function for the game																						*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
 void PlayGame()
 {
 	while(1)
 	{
 		
-		
+		/* If the game is stopped, it will be put in an infinite loop until started */
 		while(stop)
 		{}
 		

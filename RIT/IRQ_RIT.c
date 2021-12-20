@@ -39,17 +39,21 @@ int reset = 0;
 void RIT_IRQHandler (void)
 {					
 	
-	/* button management */
-	if(int0 > 1){ 
-		if((LPC_GPIO2->FIOPIN & (1<<10)) == 0){	/* INT0 pressed */				
+	/* INT0 button management */
+	if(int0 > 1)
+	{ 
+		if((LPC_GPIO2->FIOPIN & (1<<10)) == 0)
+		{				
 			switch(int0){
 				case 2:
-						LED_On(0);
+						/* When INT0 is pressed, after having lost a game
+						 * it sets reset to zero and reactivates the IRQ of KEY1
+						 */
 						if(reset == 1 && start == 0)
 						{
 								reset = 0;
-								NVIC_EnableIRQ(EINT1_IRQn);							 /* enable Button interrupts			*/
-								LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
+								NVIC_EnableIRQ(EINT1_IRQn);
+								LPC_PINCON->PINSEL4    |= (1 << 22);
 						}
 						break;
 				default:
@@ -57,24 +61,32 @@ void RIT_IRQHandler (void)
 			}
 			int0++;
 		}
-		else {	/* button released */
+		else 
+		{
 			int0=0;			
-			NVIC_EnableIRQ(EINT0_IRQn);							 /* enable Button interrupts			*/
-			LPC_PINCON->PINSEL4    |= (1 << 20);     /* External interrupt 0 pin selection */
+			NVIC_EnableIRQ(EINT0_IRQn);
+			LPC_PINCON->PINSEL4    |= (1 << 20);
 			disable_RIT();
 		}
 	}
-	else {
+	else 
+	{
 		if (int0 == 1)
 			int0++;
 	}
 	
-	/* button management */
-	if(key1 > 1){ 
-		if((LPC_GPIO2->FIOPIN & (1<<11)) == 0){	/* KEY1 pressed */				
-			switch(key1){
+	/* KEY1 button management */
+	if(key1 > 1)
+	{ 
+		if((LPC_GPIO2->FIOPIN & (1<<11)) == 0)
+		{			
+			switch(key1)
+			{
 				case 2:
-						LED_On(1);
+						/* If the KEY1 button is pressed at the beginning or after INT0
+						 * it sets start to 1, allowing the game to be played,
+						 * initiates the ADC and then... (follows in the else)
+						 */
 						if(reset != 1)
 						{
 							start = 1;
@@ -86,12 +98,16 @@ void RIT_IRQHandler (void)
 			}
 			key1++;
 		}
-		else {	/* button released */
+		else 
+		{
 			key1=0;	
+			/* If the button has been truly pressed
+			 * it disables the IRQ for KEY1
+			 */
 			if(!start)
 			{
-				NVIC_EnableIRQ(EINT1_IRQn);							 /* enable Button interrupts			*/
-				LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
+				NVIC_EnableIRQ(EINT1_IRQn);
+				LPC_PINCON->PINSEL4    |= (1 << 22);
 			}
 			disable_RIT();
 		}
@@ -101,30 +117,33 @@ void RIT_IRQHandler (void)
 			key1++;
 	}
 	
-	/* button management */
+	/* KEY2 button management */
 	if(key2 > 1){ 
-		if((LPC_GPIO2->FIOPIN & (1<<12)) == 0){	/* INT0 pressed */				
+		if((LPC_GPIO2->FIOPIN & (1<<12)) == 0){			
 			switch(key2){
 				case 2:
+					/* If KEY2 is pressed while the game is playing */
 					if (start == 1)
 					{
 						switch(stop)
 						{
+							/* If the game wasn't previously stopped
+							 * it disables the IRQ of INT0, stops the ADC and enters the loop
+							 */
 							case 0: 
 								stop = 1;
-								NVIC_DisableIRQ(EINT0_IRQn);		/* disable Button interrupts			 */
-								LPC_PINCON->PINSEL4    &= ~(1 << 20);     /* GPIO pin selection */
+								NVIC_DisableIRQ(EINT0_IRQn);
+								LPC_PINCON->PINSEL4    &= ~(1 << 20);
 							  NVIC_DisableIRQ(ADC_IRQn);
-								LED_On(2);
-								LED_Off(1);
 								break;
+							/* If the game was previously stopped
+							 * it enables the IRQ of INT0, reactivates the ADC and exits the loop
+							 */
 							case 1:
 								stop = 0;
-								NVIC_EnableIRQ(EINT0_IRQn);							 /* enable Button interrupts			*/
+								NVIC_EnableIRQ(EINT0_IRQn);
 								NVIC_EnableIRQ(ADC_IRQn);
-								LPC_PINCON->PINSEL4    |= (1 << 20);     /* External interrupt int0 pin selection */
-								LED_Off(2);
-								LED_On(1);
+								LPC_PINCON->PINSEL4    |= (1 << 20);
 								break;
 							default:
 								break;
@@ -136,19 +155,21 @@ void RIT_IRQHandler (void)
 			}
 			key2++;
 		}
-		else {	/* button released */
+		else 
+		{
 			key2=0;	
-			NVIC_EnableIRQ(EINT2_IRQn);							 /* enable Button interrupts			*/
-			LPC_PINCON->PINSEL4    |= (1 << 24);     /* External interrupt 0 pin selection */
+			NVIC_EnableIRQ(EINT2_IRQn);
+			LPC_PINCON->PINSEL4    |= (1 << 24);
 			disable_RIT();
 		}
 	}
-	else {
+	else 
+	{
 		if (key2 == 1)
 			key2++;
 	}
 	
-  LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
+  LPC_RIT->RICTRL |= 0x1;
 	
   return;
 }
