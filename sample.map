@@ -486,22 +486,22 @@ Image Symbol Table
     __NVIC_DisableIRQ                        0x000048e3   Thumb Code    30  irq_rit.o(.text)
     .text                                    0x00004ae4   Section        0  lib_rit.o(.text)
     .text                                    0x00004b78   Section        0  functs.o(.text)
-    .text                                    0x000051b0   Section        0  irq_adc.o(.text)
-    .text                                    0x000052a4   Section        0  lib_adc.o(.text)
-    .text                                    0x00005310   Section        0  noretval__2sprintf.o(.text)
-    .text                                    0x00005338   Section        0  __printf.o(.text)
-    .text                                    0x000053a0   Section        0  _printf_dec.o(.text)
-    .text                                    0x00005418   Section      138  rt_memcpy_v6.o(.text)
-    .text                                    0x000054a2   Section        0  _printf_intcommon.o(.text)
-    .text                                    0x00005554   Section        0  _printf_char_common.o(.text)
-    _printf_input_char                       0x00005555   Thumb Code    10  _printf_char_common.o(.text)
-    .text                                    0x00005584   Section      100  rt_memcpy_w.o(.text)
-    .text                                    0x000055e8   Section       74  sys_stackheap_outer.o(.text)
-    .text                                    0x00005632   Section        0  exit.o(.text)
-    .text                                    0x00005644   Section        0  sys_exit.o(.text)
-    .constdata                               0x00005650   Section       32  funct_led.o(.constdata)
-    .constdata                               0x00005670   Section     1520  asciilib.o(.constdata)
-    AsciiLib                                 0x00005670   Data        1520  asciilib.o(.constdata)
+    .text                                    0x000051c8   Section        0  irq_adc.o(.text)
+    .text                                    0x000052bc   Section        0  lib_adc.o(.text)
+    .text                                    0x00005328   Section        0  noretval__2sprintf.o(.text)
+    .text                                    0x00005350   Section        0  __printf.o(.text)
+    .text                                    0x000053b8   Section        0  _printf_dec.o(.text)
+    .text                                    0x00005430   Section      138  rt_memcpy_v6.o(.text)
+    .text                                    0x000054ba   Section        0  _printf_intcommon.o(.text)
+    .text                                    0x0000556c   Section        0  _printf_char_common.o(.text)
+    _printf_input_char                       0x0000556d   Thumb Code    10  _printf_char_common.o(.text)
+    .text                                    0x0000559c   Section      100  rt_memcpy_w.o(.text)
+    .text                                    0x00005600   Section       74  sys_stackheap_outer.o(.text)
+    .text                                    0x0000564a   Section        0  exit.o(.text)
+    .text                                    0x0000565c   Section        0  sys_exit.o(.text)
+    .constdata                               0x00005668   Section       32  funct_led.o(.constdata)
+    .constdata                               0x00005688   Section     1520  asciilib.o(.constdata)
+    AsciiLib                                 0x00005688   Data        1520  asciilib.o(.constdata)
     STACK                                    0x10000000   Section      512  startup_lpc17xx.o(STACK)
     Stack_Mem                                0x10000000   Data         512  startup_lpc17xx.o(STACK)
     __initial_sp                             0x10000200   Data           0  startup_lpc17xx.o(STACK)
@@ -691,33 +691,33 @@ Image Symbol Table
     init_RIT                                 0x00004b09   Thumb Code    98  lib_rit.o(.text)
     DrawLateralLines                         0x00004b79   Thumb Code    80  functs.o(.text)
     LCD_PutInt                               0x00004bc9   Thumb Code   242  functs.o(.text)
-    IncrementScore                           0x00004cbb   Thumb Code    40  functs.o(.text)
-    InitBall                                 0x00004ce3   Thumb Code   132  functs.o(.text)
-    GameLost                                 0x00004d67   Thumb Code   208  functs.o(.text)
-    MoveBall                                 0x00004e37   Thumb Code   818  functs.o(.text)
-    PlayGame                                 0x00005169   Thumb Code    22  functs.o(.text)
-    MovePotentiometer                        0x000051b1   Thumb Code   182  irq_adc.o(.text)
-    ADC_IRQHandler                           0x00005267   Thumb Code    40  irq_adc.o(.text)
-    ADC_init                                 0x000052a5   Thumb Code    76  lib_adc.o(.text)
-    ADC_start_conversion                     0x000052f1   Thumb Code    14  lib_adc.o(.text)
-    __2sprintf                               0x00005311   Thumb Code    34  noretval__2sprintf.o(.text)
-    __printf                                 0x00005339   Thumb Code   104  __printf.o(.text)
-    _printf_int_dec                          0x000053a1   Thumb Code   104  _printf_dec.o(.text)
-    __aeabi_memcpy                           0x00005419   Thumb Code     0  rt_memcpy_v6.o(.text)
-    __rt_memcpy                              0x00005419   Thumb Code   138  rt_memcpy_v6.o(.text)
-    _memcpy_lastbytes                        0x0000547f   Thumb Code     0  rt_memcpy_v6.o(.text)
-    _printf_int_common                       0x000054a3   Thumb Code   178  _printf_intcommon.o(.text)
-    _printf_char_common                      0x0000555f   Thumb Code    32  _printf_char_common.o(.text)
-    __aeabi_memcpy4                          0x00005585   Thumb Code     0  rt_memcpy_w.o(.text)
-    __aeabi_memcpy8                          0x00005585   Thumb Code     0  rt_memcpy_w.o(.text)
-    __rt_memcpy_w                            0x00005585   Thumb Code   100  rt_memcpy_w.o(.text)
-    _memcpy_lastbytes_aligned                0x000055cd   Thumb Code     0  rt_memcpy_w.o(.text)
-    __user_setup_stackheap                   0x000055e9   Thumb Code    74  sys_stackheap_outer.o(.text)
-    exit                                     0x00005633   Thumb Code    18  exit.o(.text)
-    _sys_exit                                0x00005645   Thumb Code     8  sys_exit.o(.text)
-    led_mask                                 0x00005650   Data          32  funct_led.o(.constdata)
-    Region$$Table$$Base                      0x00005c60   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00005c90   Number         0  anon$$obj.o(Region$$Table)
+    IncrementScore                           0x00004cbb   Thumb Code    62  functs.o(.text)
+    InitBall                                 0x00004cf9   Thumb Code   132  functs.o(.text)
+    GameLost                                 0x00004d7d   Thumb Code   208  functs.o(.text)
+    MoveBall                                 0x00004e4d   Thumb Code   816  functs.o(.text)
+    PlayGame                                 0x0000517d   Thumb Code    22  functs.o(.text)
+    MovePotentiometer                        0x000051c9   Thumb Code   182  irq_adc.o(.text)
+    ADC_IRQHandler                           0x0000527f   Thumb Code    40  irq_adc.o(.text)
+    ADC_init                                 0x000052bd   Thumb Code    76  lib_adc.o(.text)
+    ADC_start_conversion                     0x00005309   Thumb Code    14  lib_adc.o(.text)
+    __2sprintf                               0x00005329   Thumb Code    34  noretval__2sprintf.o(.text)
+    __printf                                 0x00005351   Thumb Code   104  __printf.o(.text)
+    _printf_int_dec                          0x000053b9   Thumb Code   104  _printf_dec.o(.text)
+    __aeabi_memcpy                           0x00005431   Thumb Code     0  rt_memcpy_v6.o(.text)
+    __rt_memcpy                              0x00005431   Thumb Code   138  rt_memcpy_v6.o(.text)
+    _memcpy_lastbytes                        0x00005497   Thumb Code     0  rt_memcpy_v6.o(.text)
+    _printf_int_common                       0x000054bb   Thumb Code   178  _printf_intcommon.o(.text)
+    _printf_char_common                      0x00005577   Thumb Code    32  _printf_char_common.o(.text)
+    __aeabi_memcpy4                          0x0000559d   Thumb Code     0  rt_memcpy_w.o(.text)
+    __aeabi_memcpy8                          0x0000559d   Thumb Code     0  rt_memcpy_w.o(.text)
+    __rt_memcpy_w                            0x0000559d   Thumb Code   100  rt_memcpy_w.o(.text)
+    _memcpy_lastbytes_aligned                0x000055e5   Thumb Code     0  rt_memcpy_w.o(.text)
+    __user_setup_stackheap                   0x00005601   Thumb Code    74  sys_stackheap_outer.o(.text)
+    exit                                     0x0000564b   Thumb Code    18  exit.o(.text)
+    _sys_exit                                0x0000565d   Thumb Code     8  sys_exit.o(.text)
+    led_mask                                 0x00005668   Data          32  funct_led.o(.constdata)
+    Region$$Table$$Base                      0x00005c78   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00005ca8   Number         0  anon$$obj.o(Region$$Table)
     SystemFrequency                          0x2007c000   Data           4  system_lpc17xx.o(.data)
     ScaleFlag                                0x2007c004   Data           1  system_lpc17xx.o(.data)
     led_value                                0x2007c005   Data           1  lib_led.o(.data)
@@ -748,9 +748,9 @@ Memory Map of the image
 
   Image Entry point : 0x000000cd
 
-  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00005cd4, Max: 0x00080000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00005cec, Max: 0x00080000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00005c90, Max: 0x00080000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00005ca8, Max: 0x00080000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -824,44 +824,44 @@ Memory Map of the image
     0x000007dc   0x000007dc   0x000040e4   Code   RO          334    .text               glcd.o
     0x000048c0   0x000048c0   0x00000224   Code   RO          380    .text               irq_rit.o
     0x00004ae4   0x00004ae4   0x00000094   Code   RO          421    .text               lib_rit.o
-    0x00004b78   0x00004b78   0x00000638   Code   RO          483    .text               functs.o
-    0x000051b0   0x000051b0   0x000000f4   Code   RO          528    .text               irq_adc.o
-    0x000052a4   0x000052a4   0x0000006c   Code   RO          565    .text               lib_adc.o
-    0x00005310   0x00005310   0x00000028   Code   RO          590    .text               c_w.l(noretval__2sprintf.o)
-    0x00005338   0x00005338   0x00000068   Code   RO          592    .text               c_w.l(__printf.o)
-    0x000053a0   0x000053a0   0x00000078   Code   RO          594    .text               c_w.l(_printf_dec.o)
-    0x00005418   0x00005418   0x0000008a   Code   RO          618    .text               c_w.l(rt_memcpy_v6.o)
-    0x000054a2   0x000054a2   0x000000b2   Code   RO          651    .text               c_w.l(_printf_intcommon.o)
-    0x00005554   0x00005554   0x00000030   Code   RO          653    .text               c_w.l(_printf_char_common.o)
-    0x00005584   0x00005584   0x00000064   Code   RO          658    .text               c_w.l(rt_memcpy_w.o)
-    0x000055e8   0x000055e8   0x0000004a   Code   RO          684    .text               c_w.l(sys_stackheap_outer.o)
-    0x00005632   0x00005632   0x00000012   Code   RO          686    .text               c_w.l(exit.o)
-    0x00005644   0x00005644   0x0000000c   Code   RO          755    .text               c_w.l(sys_exit.o)
-    0x00005650   0x00005650   0x00000020   Data   RO          140    .constdata          funct_led.o
-    0x00005670   0x00005670   0x000005f0   Data   RO          312    .constdata          asciilib.o
-    0x00005c60   0x00005c60   0x00000030   Data   RO          823    Region$$Table       anon$$obj.o
+    0x00004b78   0x00004b78   0x00000650   Code   RO          483    .text               functs.o
+    0x000051c8   0x000051c8   0x000000f4   Code   RO          528    .text               irq_adc.o
+    0x000052bc   0x000052bc   0x0000006c   Code   RO          565    .text               lib_adc.o
+    0x00005328   0x00005328   0x00000028   Code   RO          590    .text               c_w.l(noretval__2sprintf.o)
+    0x00005350   0x00005350   0x00000068   Code   RO          592    .text               c_w.l(__printf.o)
+    0x000053b8   0x000053b8   0x00000078   Code   RO          594    .text               c_w.l(_printf_dec.o)
+    0x00005430   0x00005430   0x0000008a   Code   RO          618    .text               c_w.l(rt_memcpy_v6.o)
+    0x000054ba   0x000054ba   0x000000b2   Code   RO          651    .text               c_w.l(_printf_intcommon.o)
+    0x0000556c   0x0000556c   0x00000030   Code   RO          653    .text               c_w.l(_printf_char_common.o)
+    0x0000559c   0x0000559c   0x00000064   Code   RO          658    .text               c_w.l(rt_memcpy_w.o)
+    0x00005600   0x00005600   0x0000004a   Code   RO          684    .text               c_w.l(sys_stackheap_outer.o)
+    0x0000564a   0x0000564a   0x00000012   Code   RO          686    .text               c_w.l(exit.o)
+    0x0000565c   0x0000565c   0x0000000c   Code   RO          755    .text               c_w.l(sys_exit.o)
+    0x00005668   0x00005668   0x00000020   Data   RO          140    .constdata          funct_led.o
+    0x00005688   0x00005688   0x000005f0   Data   RO          312    .constdata          asciilib.o
+    0x00005c78   0x00005c78   0x00000030   Data   RO          823    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x10000000, Load base: 0x00005c90, Size: 0x00000200, Max: 0x00008000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x10000000, Load base: 0x00005ca8, Size: 0x00000200, Max: 0x00008000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x10000000        -       0x00000200   Zero   RW            1    STACK               startup_lpc17xx.o
 
 
-    Execution Region RW_IRAM2 (Exec base: 0x2007c000, Load base: 0x00005c90, Size: 0x000000a8, Max: 0x00008000, ABSOLUTE)
+    Execution Region RW_IRAM2 (Exec base: 0x2007c000, Load base: 0x00005ca8, Size: 0x000000a8, Max: 0x00008000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x2007c000   0x00005c90   0x00000005   Data   RW          106    .data               system_lpc17xx.o
-    0x2007c005   0x00005c95   0x00000001   Data   RW          175    .data               lib_led.o
-    0x2007c006   0x00005c96   0x00000001   Data   RW          262    .data               irq_timer.o
-    0x2007c007   0x00005c97   0x00000001   Data   RW          335    .data               glcd.o
-    0x2007c008   0x00005c98   0x00000018   Data   RW          381    .data               irq_rit.o
-    0x2007c020   0x00005cb0   0x0000001c   Data   RW          484    .data               functs.o
-    0x2007c03c   0x00005ccc   0x00000008   Data   RW          529    .data               irq_adc.o
+    0x2007c000   0x00005ca8   0x00000005   Data   RW          106    .data               system_lpc17xx.o
+    0x2007c005   0x00005cad   0x00000001   Data   RW          175    .data               lib_led.o
+    0x2007c006   0x00005cae   0x00000001   Data   RW          262    .data               irq_timer.o
+    0x2007c007   0x00005caf   0x00000001   Data   RW          335    .data               glcd.o
+    0x2007c008   0x00005cb0   0x00000018   Data   RW          381    .data               irq_rit.o
+    0x2007c020   0x00005cc8   0x0000001c   Data   RW          484    .data               functs.o
+    0x2007c03c   0x00005ce4   0x00000008   Data   RW          529    .data               irq_adc.o
     0x2007c044        -       0x00000060   Zero   RW          695    .bss                c_w.l(libspace.o)
-    0x2007c0a4   0x00005cd4   0x00000004   PAD
+    0x2007c0a4   0x00005cec   0x00000004   PAD
     0x2007c0a8        -       0x00000000   Zero   RW            2    HEAP                startup_lpc17xx.o
 
 
@@ -874,7 +874,7 @@ Image component sizes
 
         32          6       1520          0          0       1467   asciilib.o
        112         14         32          0          0      18460   funct_led.o
-      1592        106          0         28          0       2588   functs.o
+      1616        112          0         28          0       2564   functs.o
      16612        104          0          1          0      40139   glcd.o
        244         22          0          8          0       1024   irq_adc.o
        196         28          0          0          0        997   irq_button.o
@@ -889,7 +889,7 @@ Image component sizes
        588         36          0          5          0        937   system_lpc17xx.o
 
     ----------------------------------------------------------------------
-     20868        496       1804         68        512     148566   Object Totals
+     20892        502       1804         68        512     148542   Object Totals
          0          0         48          0          0          0   (incl. Generated)
          0          0          0          0          0          0   (incl. Padding)
 
@@ -949,15 +949,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     21892        540       1804         68        612     148402   Grand Totals
-     21892        540       1804         68        612     148402   ELF Image Totals
-     21892        540       1804         68          0          0   ROM Totals
+     21916        546       1804         68        612     148430   Grand Totals
+     21916        546       1804         68        612     148430   ELF Image Totals
+     21916        546       1804         68          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                23696 (  23.14kB)
+    Total RO  Size (Code + RO Data)                23720 (  23.16kB)
     Total RW  Size (RW Data + ZI Data)               680 (   0.66kB)
-    Total ROM Size (Code + RO Data + RW Data)      23764 (  23.21kB)
+    Total ROM Size (Code + RO Data + RW Data)      23788 (  23.23kB)
 
 ==============================================================================
 
