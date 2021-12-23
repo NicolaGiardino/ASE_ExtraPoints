@@ -12,3 +12,9 @@
 .\irq_rit.o: RIT\../timer/timer.h
 .\irq_rit.o: RIT\../adc/adc.h
 .\irq_rit.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\irq_rit.o: RIT\../MyLib/functs.h
+.\irq_rit.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\irq_rit.o: RIT\../MyLib/../GLCD/GLCD.h
+.\irq_rit.o: RIT\../MyLib/../TouchPanel/TouchPanel.h
+.\irq_rit.o: RIT\../MyLib/../led/led.h
+.\irq_rit.o: RIT\../MyLib/../adc/adc.h

@@ -13,6 +13,7 @@
 #include "../led/led.h"
 #include "../TouchPanel/TouchPanel.h"
 #include "../GLCD/GLCD.h"
+#include "../MyLib/functs.h"
 
 /*----------------------------------------------------------------------------
   A/D IRQ: Executed when A/D Conversion is ready (signal from ADC peripheral)
@@ -26,6 +27,9 @@ unsigned short AD_last = 0xFF;     /* Last converted value               */
 
 uint16_t adc_Xposition = MAX_X / 2 - 20;
 uint16_t adc_Yposition = MAX_Y - 33;
+
+static uint16_t lastX;
+static uint16_t lastY;
 
 /********************************************************************************
 *                                                                               *
@@ -44,6 +48,10 @@ uint16_t adc_Yposition = MAX_Y - 33;
 void MovePotentiometer()
 {
 	size_t i;
+	
+	lastX = adc_Xposition;
+	lastY = adc_Yposition;
+	
 	/* The paddle goes from where the potentiometer is: [-  ] to [  -], clockwise */
 	if(AD_current < MIN_PADDLE)
 	{
@@ -57,12 +65,20 @@ void MovePotentiometer()
 	{
 		adc_Xposition = (AD_current - MIN_PADDLE) * (MAX_X - 46) / (MAX_PADDLE - MIN_PADDLE) + 6;
 	}
-	for(i = 0; i < 5; i++)
+	for(i = 0; i < 40; i++)
 	{
-		LCD_DrawLine(adc_Xposition, adc_Yposition - i, adc_Xposition + 40, adc_Yposition - i, Green);
-		LCD_DrawLine(6, adc_Yposition - i, adc_Xposition - 1, adc_Yposition - i, Black); /* Clear last paddle */
-		LCD_DrawLine(adc_Xposition + 40, adc_Yposition - i, MAX_X - 6, adc_Yposition - i, Black); 
+		/* Clear last paddle */
+		if((lastX + i) < adc_Xposition || (lastX + i) > (adc_Xposition + 40))
+		{
+			LCD_DrawLine(lastX + i, lastY, lastX + i, lastY + 5, Black);
+		}
+		/* Set new paddle */
+		if((adc_Xposition + i) < lastX || (adc_Xposition + i) > (lastX + 40))
+		{
+			LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 5, Green);
+		}
 	}
+	
 }
 
 
@@ -73,6 +89,7 @@ void ADC_IRQHandler(void) {
 	{
 		AD_last = AD_current;
 		MovePotentiometer();
+		MoveBall();
   }	
 	
 }

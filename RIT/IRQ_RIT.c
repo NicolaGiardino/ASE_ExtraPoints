@@ -12,6 +12,7 @@
 #include "../led/led.h"
 #include "../timer/timer.h"
 #include "../adc/adc.h"
+#include "../MyLib/functs.h"
 
 /******************************************************************************
 ** Function name:		RIT_IRQHandler
@@ -26,7 +27,9 @@
 #define N 4
 
 extern int ricerca_massimo_negativo(int* VETT, unsigned int n);
-extern int led_state;
+extern int score;
+extern uint8_t ScaleFlag;
+extern uint16_t adc_Xposition, adc_Yposition;
 
 int key2 = 0;
 int key1 = 0;
@@ -36,8 +39,11 @@ int start = 0;
 int stop = 0;
 int reset = 0;
 
+static int lost = 0;
+
 void RIT_IRQHandler (void)
 {					
+	size_t i;
 	
 	/* INT0 button management */
 	if(int0 > 1)
@@ -52,6 +58,8 @@ void RIT_IRQHandler (void)
 						if(reset == 1 && start == 0)
 						{
 								reset = 0;
+								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", Black, Black);
+								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press KEY1 to Restart", White, Black);
 								NVIC_EnableIRQ(EINT1_IRQn);
 								LPC_PINCON->PINSEL4    |= (1 << 22);
 						}
@@ -66,7 +74,6 @@ void RIT_IRQHandler (void)
 			int0=0;			
 			NVIC_EnableIRQ(EINT0_IRQn);
 			LPC_PINCON->PINSEL4    |= (1 << 20);
-			disable_RIT();
 		}
 	}
 	else 
@@ -89,6 +96,17 @@ void RIT_IRQHandler (void)
 						 */
 						if(reset != 1)
 						{
+							lost = 0;
+							LCD_Clear(Black);
+							score = 0;
+							DrawLateralLines();
+							LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+							/* Init Paddle position */
+							for(i = 0; i < 40; i++)
+							{
+								LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 5, Green);
+							}
+							InitBall();
 							start = 1;
 							ADC_init();
 						}
@@ -109,7 +127,6 @@ void RIT_IRQHandler (void)
 				NVIC_EnableIRQ(EINT1_IRQn);
 				LPC_PINCON->PINSEL4    |= (1 << 22);
 			}
-			disable_RIT();
 		}
 	}
 	else {
@@ -160,7 +177,6 @@ void RIT_IRQHandler (void)
 			key2=0;	
 			NVIC_EnableIRQ(EINT2_IRQn);
 			LPC_PINCON->PINSEL4    |= (1 << 24);
-			disable_RIT();
 		}
 	}
 	else 
@@ -168,6 +184,19 @@ void RIT_IRQHandler (void)
 		if (key2 == 1)
 			key2++;
 	}
+	
+	if(start == 1)
+	{
+		ADC_start_conversion();
+	}
+	else if(!start && reset == 1 && !lost)
+	{
+		GameLost();
+		lost = 1;
+	}
+	
+	if(LPC_RIT->RICOUNTER > 0x004C4B40 / ScaleFlag)
+		LPC_RIT->RICOUNTER = 0;
 	
   LPC_RIT->RICTRL |= 0x1;
 	

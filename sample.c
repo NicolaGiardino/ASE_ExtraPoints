@@ -40,50 +40,36 @@ extern uint16_t adc_Xposition, adc_Yposition;
  *----------------------------------------------------------------------------*/
 int main (void) 
 {
-	size_t i;
 	SystemInit();  												/* System Initialization (i.e., PLL)  */
 	
 	
   LCD_Initialization();
 	LCD_Clear(Black);
 	/* Draw the game board */
-	DrawLateralLines();
-	LCD_PutInt(6, MAX_Y / 2, score, White, Black);
-	/* Init Paddle position */
-	for(i = 0; i < 5; i++)
-	{
-		LCD_DrawLine(adc_Xposition, adc_Yposition - i, adc_Xposition + 40, adc_Yposition - i, Green);
-	}
-	InitBall();
+	GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start", White, Black);
+	
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
 	/* 
 	 * The priotiry of the ADC is higher than the one of EINT0, 
 	 * so as not to have it at a higher piority than the buttons 
 	 */
-	NVIC_SetPriority(ADC_IRQn, 3);
+	NVIC_SetPriority(ADC_IRQn, 1);
 	init_RIT(0x004C4B40);									/* RIT Initialization 50 msec       	*/
 	enable_RIT();													/* RIT enabled												*/
 	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= ~(0x2);	
 	
-	LPC_PINCON->PINSEL1 |= (1<<21);
+	/*LPC_PINCON->PINSEL1 |= (1<<21);
 	LPC_PINCON->PINSEL1 &= ~(1<<20);
-	LPC_GPIO0->FIODIR |= (1<<26);
+	LPC_GPIO0->FIODIR |= (1<<26);*/
 	
-  while (!start) 
+  while (1) 
 	{ 
 		
 		__ASM("wfi");
 		
   }
-	
-	LPC_SC->PCON &= ~(0x1);
-	
-	PlayGame();
-	
-	while(1)
-	{}
 
 }

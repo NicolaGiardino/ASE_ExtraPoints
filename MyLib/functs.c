@@ -180,15 +180,15 @@ void MoveBall()
 		static uint16_t adc_Xold;
 		static int speed;
 		size_t i;
-		/* Delete previous ball */
 		for(i = 0; i < 5; i++)
 		{
-			LCD_DrawLine(x_old - 4, y_old - i, x_old, y_old - i, Black);
+			/* Delete previous ball */
+			LCD_DrawLine(x_old - i, y_old - 4, x_old - i, y_old, Black);
 		}
-		/* Draw the ball */
 		for(i = 0; i < 5; i++)
 		{
-			LCD_DrawLine(ball_Xpos - 4, ball_Ypos - i, ball_Xpos, ball_Ypos - i,Green);
+			/* Draw the ball */
+			LCD_DrawLine(ball_Xpos - i, ball_Ypos - 4, ball_Xpos - i, ball_Ypos, Green);
 		}
 		
 		/* Calculate next position */
@@ -197,7 +197,7 @@ void MoveBall()
 			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition)))
 		{
 			/* If the ball's in one of the two top edges */
-			if(ball_Ypos <= MIN_BALLY)
+			if(ball_Ypos - 4 <= MIN_BALLY)
 			{
 				x_new = x_old;
 				y_new = y_old;
@@ -219,7 +219,7 @@ void MoveBall()
 				LPC_DAC->DACR = 400<<6;
 			}
 		}
-		else if(ball_Ypos <= MIN_BALLY)
+		else if(ball_Ypos - 4 <= MIN_BALLY)
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = y_old;
@@ -270,9 +270,26 @@ void MoveBall()
 			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 		}
 		/* Just to keep the integrity of the game environment */
-		if(x_old <= MIN_BALLX || x_old >= MAX_BALLX || y_old - 4 < MIN_BALLY)
+		if(x_old <= MIN_BALLX)
 		{
-			DrawLateralLines();
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(i, 0, i, MAX_Y - 1, Red);
+			}
+		}
+		else if(x_old >= MAX_BALLX)
+		{
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, MAX_Y - 1, Red);
+			}
+		}
+		else if(y_old - 4 < MIN_BALLY)
+		{
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(0, i, MAX_X - 1, i, Red);
+			}
 		}
 		
 		/* Update the values */
@@ -312,49 +329,7 @@ void GameLost()
 			 */
 			reset = 1;
 			start = 0;
-			PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', White, Black);
-			PutChar(MAX_X/2 - 40, MAX_Y / 2, 'o', White, Black);
-			PutChar(MAX_X/2 - 30, MAX_Y / 2, 'u', White, Black);
-			PutChar(MAX_X/2 - 20, MAX_Y / 2, ' ', White, Black);
-			PutChar(MAX_X/2 - 10, MAX_Y / 2, 'L', White, Black);
-			PutChar(MAX_X/2, MAX_Y / 2, 'o', White, Black);
-			PutChar(MAX_X/2 + 10, MAX_Y / 2, 's', White, Black);
-			PutChar(MAX_X/2 + 20, MAX_Y / 2, 'e', White, Black);
-			while(start == 0)
-			{}
-			LCD_Clear(Black);
-			score = 0;
-			DrawLateralLines();
-			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
-			InitBall();
-}
-
-/********************************************************************************
-*                                                                               *
-* FUNCTION NAME: PlayGame					                                              *
-*                                                                               *
-* PURPOSE: Main function for the game																						*
-* ARGUMENT LIST:                                                                *
-*                                                                               *
-* Argument  Type         IO     Description                                     *
-* --------- --------     --     ---------------------------------               *
-*                                                                               *
-* RETURN VALUE: void                                                            *
-*                                                                               *
-********************************************************************************/
-void PlayGame()
-{
-	while(1)
-	{
-		
-		/* If the game is stopped, it will be put in an infinite loop until started */
-		while(stop)
-		{}
-		
-		ADC_start_conversion();
-		MoveBall();
-		
-		
-	}
-	
+			GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+			GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", White, Black);
+			
 }

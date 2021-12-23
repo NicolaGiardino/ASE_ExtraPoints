@@ -12,3 +12,7 @@
 .\irq_adc.o: adc\../led/led.h
 .\irq_adc.o: adc\../TouchPanel/TouchPanel.h
 .\irq_adc.o: adc\../GLCD/GLCD.h
+.\irq_adc.o: adc\../MyLib/functs.h
+.\irq_adc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\irq_adc.o: adc\../MyLib/../led/led.h
+.\irq_adc.o: adc\../MyLib/../adc/adc.h
