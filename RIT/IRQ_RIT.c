@@ -28,7 +28,7 @@
 
 extern int ricerca_massimo_negativo(int* VETT, unsigned int n);
 extern int score;
-
+extern uint8_t ScaleFlag;
 extern uint16_t adc_Xposition, adc_Yposition;
 
 int key2 = 0;
@@ -39,10 +39,11 @@ int start = 0;
 int stop = 0;
 int reset = 0;
 
+static int lost = 0;
+
 void RIT_IRQHandler (void)
 {					
 	size_t i;
-	
 	
 	/* INT0 button management */
 	if(int0 > 1)
@@ -93,6 +94,7 @@ void RIT_IRQHandler (void)
 						 */
 						if(reset != 1)
 						{
+							lost = 0;
 							LCD_Clear(Black);
 							score = 0;
 							DrawLateralLines();
@@ -100,7 +102,7 @@ void RIT_IRQHandler (void)
 							/* Init Paddle position */
 							for(i = 0; i < 40; i++)
 							{
-								LCD_DrawLine(adc_Xposition + 20 - i, adc_Yposition, adc_Xposition + 20 - i, adc_Yposition + 5, Green);
+								LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 5, Green);
 							}
 							InitBall();
 							start = 1;
@@ -185,12 +187,13 @@ void RIT_IRQHandler (void)
 	{
 		ADC_start_conversion();
 	}
-	else if(!start && reset == 1)
+	else if(!start && reset == 1 && !lost)
 	{
 		GameLost();
+		lost = 1;
 	}
 	
-	if(LPC_RIT->RICOUNTER > 0x004C4B40)
+	if(LPC_RIT->RICOUNTER > 0x004C4B40 / ScaleFlag)
 		LPC_RIT->RICOUNTER = 0;
 	
   LPC_RIT->RICTRL |= 0x1;

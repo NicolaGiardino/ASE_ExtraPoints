@@ -180,15 +180,15 @@ void MoveBall()
 		static uint16_t adc_Xold;
 		static int speed;
 		size_t i;
-		/* Delete previous ball */
 		for(i = 0; i < 5; i++)
 		{
-			LCD_DrawLine(x_old - 4, y_old - i, x_old, y_old - i, Black);
+			/* Delete previous ball */
+			LCD_DrawLine(x_old - i, y_old - 4, x_old - i, y_old, Black);
 		}
-		/* Draw the ball */
 		for(i = 0; i < 5; i++)
 		{
-			LCD_DrawLine(ball_Xpos - 4, ball_Ypos - i, ball_Xpos, ball_Ypos - i,Green);
+			/* Draw the ball */
+			LCD_DrawLine(ball_Xpos - i, ball_Ypos - 4, ball_Xpos - i, ball_Ypos, Green);
 		}
 		
 		/* Calculate next position */
@@ -270,9 +270,26 @@ void MoveBall()
 			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 		}
 		/* Just to keep the integrity of the game environment */
-		if(x_old <= MIN_BALLX || x_old >= MAX_BALLX || y_old - 4 < MIN_BALLY)
+		if(x_old <= MIN_BALLX)
 		{
-			DrawLateralLines();
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(i, 0, i, MAX_Y - 1, Red);
+			}
+		}
+		else if(x_old >= MAX_BALLX)
+		{
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, MAX_Y - 1, Red);
+			}
+		}
+		else if(y_old - 4 < MIN_BALLY)
+		{
+			for(i = 0; i < 5; i++)
+			{
+				LCD_DrawLine(0, i, MAX_X - 1, i, Red);
+			}
 		}
 		
 		/* Update the values */
@@ -314,32 +331,4 @@ void GameLost()
 			start = 0;
 			GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
 			
-}
-
-/********************************************************************************
-*                                                                               *
-* FUNCTION NAME: PlayGame					                                              *
-*                                                                               *
-* PURPOSE: Main function for the game																						*
-* ARGUMENT LIST:                                                                *
-*                                                                               *
-* Argument  Type         IO     Description                                     *
-* --------- --------     --     ---------------------------------               *
-*                                                                               *
-* RETURN VALUE: void                                                            *
-*                                                                               *
-********************************************************************************/
-void PlayGame()
-{
-	while(1)
-	{
-		
-		/* If the game is stopped, it will be put in an infinite loop until started */
-		while(stop)
-		{}
-		
-		
-		
-	}
-	
 }

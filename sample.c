@@ -46,10 +46,8 @@ int main (void)
   LCD_Initialization();
 	LCD_Clear(Black);
 	/* Draw the game board */
-	DrawLateralLines();
-	LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+	GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start", White, Black);
 	
-	InitBall();
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
 	/* 
