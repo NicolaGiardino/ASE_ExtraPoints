@@ -61,9 +61,9 @@ int main (void)
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= ~(0x2);	
 	
-	LPC_PINCON->PINSEL1 |= (1<<21);
+	/*LPC_PINCON->PINSEL1 |= (1<<21);
 	LPC_PINCON->PINSEL1 &= ~(1<<20);
-	LPC_GPIO0->FIODIR |= (1<<26);
+	LPC_GPIO0->FIODIR |= (1<<26);*/
 	
   while (1) 
 	{ 

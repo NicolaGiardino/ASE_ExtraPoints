@@ -58,6 +58,8 @@ void RIT_IRQHandler (void)
 						if(reset == 1 && start == 0)
 						{
 								reset = 0;
+								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", Black, Black);
+								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press KEY1 to Restart", White, Black);
 								NVIC_EnableIRQ(EINT1_IRQn);
 								LPC_PINCON->PINSEL4    |= (1 << 22);
 						}

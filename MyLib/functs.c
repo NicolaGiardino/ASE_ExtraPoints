@@ -197,7 +197,7 @@ void MoveBall()
 			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition)))
 		{
 			/* If the ball's in one of the two top edges */
-			if(ball_Ypos <= MIN_BALLY)
+			if(ball_Ypos - 4 <= MIN_BALLY)
 			{
 				x_new = x_old;
 				y_new = y_old;
@@ -219,7 +219,7 @@ void MoveBall()
 				LPC_DAC->DACR = 400<<6;
 			}
 		}
-		else if(ball_Ypos <= MIN_BALLY)
+		else if(ball_Ypos - 4 <= MIN_BALLY)
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = y_old;
@@ -330,5 +330,6 @@ void GameLost()
 			reset = 1;
 			start = 0;
 			GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+			GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", White, Black);
 			
 }
