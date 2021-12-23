@@ -312,21 +312,8 @@ void GameLost()
 			 */
 			reset = 1;
 			start = 0;
-			PutChar(MAX_X/2 - 50, MAX_Y / 2, 'Y', White, Black);
-			PutChar(MAX_X/2 - 40, MAX_Y / 2, 'o', White, Black);
-			PutChar(MAX_X/2 - 30, MAX_Y / 2, 'u', White, Black);
-			PutChar(MAX_X/2 - 20, MAX_Y / 2, ' ', White, Black);
-			PutChar(MAX_X/2 - 10, MAX_Y / 2, 'L', White, Black);
-			PutChar(MAX_X/2, MAX_Y / 2, 'o', White, Black);
-			PutChar(MAX_X/2 + 10, MAX_Y / 2, 's', White, Black);
-			PutChar(MAX_X/2 + 20, MAX_Y / 2, 'e', White, Black);
-			while(start == 0)
-			{}
-			LCD_Clear(Black);
-			score = 0;
-			DrawLateralLines();
-			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
-			InitBall();
+			GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+			
 }
 
 /********************************************************************************
@@ -351,8 +338,6 @@ void PlayGame()
 		while(stop)
 		{}
 		
-		ADC_start_conversion();
-		MoveBall();
 		
 		
 	}
