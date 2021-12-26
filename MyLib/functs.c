@@ -1,12 +1,12 @@
 #include "functs.h"
 
 /* Potentiometer edge positions */
-#define MAX_POT MAX_X - 6
 #define MIN_POT 6
+#define MAX_POT MAX_X - 6
 
 /* Ball edge positions on both axis */
-#define MAX_BALLX MAX_X - 6
 #define MIN_BALLX 6
+#define MAX_BALLX MAX_X - 6
 
 #define MIN_BALLY 6
 #define MAX_BALLY MAX_Y - 33

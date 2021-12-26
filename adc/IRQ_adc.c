@@ -29,7 +29,6 @@ uint16_t adc_Xposition = MAX_X / 2 - 20;
 uint16_t adc_Yposition = MAX_Y - 33;
 
 static uint16_t lastX;
-static uint16_t lastY;
 
 /********************************************************************************
 *                                                                               *
@@ -50,7 +49,6 @@ void MovePotentiometer()
 	size_t i;
 	
 	lastX = adc_Xposition;
-	lastY = adc_Yposition;
 	
 	/* The paddle goes from where the potentiometer is: [-  ] to [  -], clockwise */
 	if(AD_current < MIN_PADDLE)
@@ -65,12 +63,17 @@ void MovePotentiometer()
 	{
 		adc_Xposition = (AD_current - MIN_PADDLE) * (MAX_X - 46) / (MAX_PADDLE - MIN_PADDLE) + 6;
 	}
+	if((adc_Xposition - lastX) < 5 && (adc_Xposition - lastX) > -5)
+	{
+		adc_Xposition = lastX;
+		return;
+	}
 	for(i = 0; i < 40; i++)
 	{
 		/* Clear last paddle */
 		if((lastX + i) < adc_Xposition || (lastX + i) > (adc_Xposition + 40))
 		{
-			LCD_DrawLine(lastX + i, lastY, lastX + i, lastY + 5, Black);
+			LCD_DrawLine(lastX + i, adc_Yposition, lastX + i, adc_Yposition + 5, Black);
 		}
 		/* Set new paddle */
 		if((adc_Xposition + i) < lastX || (adc_Xposition + i) > (lastX + 40))
