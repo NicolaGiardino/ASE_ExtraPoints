@@ -47,7 +47,7 @@ int main (void)
 	LCD_Clear(Black);
 	/* Draw the game board */
 	GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start", White, Black);
-	
+	record = 100;
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
 	/* 

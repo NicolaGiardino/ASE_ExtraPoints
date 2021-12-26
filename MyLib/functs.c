@@ -48,9 +48,9 @@ void DrawLateralLines()
 	
 	for(i = 0; i < 5; i++)
 	{
-		LCD_DrawLine(i, 0, i, MAX_Y - 1, Red);
+		LCD_DrawLine(i, 0, i, adc_Yposition, Red);
 		LCD_DrawLine(0, i, MAX_X - 1, i, Red);
-		LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, MAX_Y - 1, Red);
+		LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, adc_Yposition, Red);
 	}
 }
 
@@ -75,7 +75,7 @@ void DrawLateralLines()
 void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, uint16_t bkColor)
 {
 		char ascii[8];
-		sprintf(ascii,"%d",score);
+		sprintf(ascii,"%d",number);
 		if(number < 10)
 		{
 			PutChar(Xpos, Ypos, ascii[0], charColor, bkColor);
@@ -119,6 +119,7 @@ void IncrementScore()
 	{
 		score += 10;
 		record = score;
+		LCD_PutInt(MAX_X - 35, 6, record, White, Black);
 	}
 	else
 	{

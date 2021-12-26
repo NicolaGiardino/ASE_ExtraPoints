@@ -26,7 +26,7 @@ unsigned short AD_current;
 unsigned short AD_last = 0xFF;     /* Last converted value               */
 
 uint16_t adc_Xposition = MAX_X / 2 - 20;
-uint16_t adc_Yposition = MAX_Y - 33;
+uint16_t adc_Yposition = MAX_Y - 33 - 5;
 
 static uint16_t lastX;
 

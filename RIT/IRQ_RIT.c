@@ -24,10 +24,9 @@
 **
 ******************************************************************************/
 
-#define N 4
 
-extern int ricerca_massimo_negativo(int* VETT, unsigned int n);
 extern int score;
+extern int record;
 extern uint8_t ScaleFlag;
 extern uint16_t adc_Xposition, adc_Yposition;
 
@@ -58,8 +57,8 @@ void RIT_IRQHandler (void)
 						if(reset == 1 && start == 0)
 						{
 								reset = 0;
-								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", Black, Black);
-								GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press KEY1 to Restart", White, Black);
+								LCD_Clear(Black);
+								GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Restart", White, Black);
 								NVIC_EnableIRQ(EINT1_IRQn);
 								LPC_PINCON->PINSEL4    |= (1 << 22);
 						}
@@ -97,8 +96,8 @@ void RIT_IRQHandler (void)
 						if(reset != 1)
 						{
 							lost = 0;
-							LCD_Clear(Black);
-							score = 0;
+							score += 95;
+							GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start", Black, Black);
 							DrawLateralLines();
 							LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 							/* Init Paddle position */
@@ -109,6 +108,7 @@ void RIT_IRQHandler (void)
 							InitBall();
 							start = 1;
 							ADC_init();
+							LCD_PutInt(MAX_X - 35, 6, record, White, Black);
 						}
 					break;
 				default:
