@@ -270,19 +270,23 @@ void MoveBall()
 		{
 			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
 		}
+		else if((ball_Xpos > MAX_X - 35 && ball_Xpos < MAX_X - 6) && (ball_Ypos > 5 && ball_Ypos  < 14))
+		{
+			LCD_PutInt(MAX_X - 35, 6, record, White, Black);
+		}			
 		/* Just to keep the integrity of the game environment */
 		if(x_old <= MIN_BALLX)
 		{
 			for(i = 0; i < 5; i++)
 			{
-				LCD_DrawLine(i, 0, i, MAX_Y - 1, Red);
+				LCD_DrawLine(i, 0, i, adc_Yposition, Red);
 			}
 		}
 		else if(x_old >= MAX_BALLX)
 		{
 			for(i = 0; i < 5; i++)
 			{
-				LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, MAX_Y - 1, Red);
+				LCD_DrawLine(MAX_X - 1 - i, 0, MAX_X - 1 - i, adc_Yposition, Red);
 			}
 		}
 		else if(y_old - 4 < MIN_BALLY)

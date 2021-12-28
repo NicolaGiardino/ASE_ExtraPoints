@@ -26,7 +26,7 @@ unsigned short AD_current;
 unsigned short AD_last = 0xFF;     /* Last converted value               */
 
 uint16_t adc_Xposition = MAX_X / 2 - 20;
-uint16_t adc_Yposition = MAX_Y - 33 - 5;
+uint16_t adc_Yposition = MAX_Y - 33;
 
 static uint16_t lastX;
 
@@ -73,12 +73,12 @@ void MovePotentiometer()
 		/* Clear last paddle */
 		if((lastX + i) < adc_Xposition || (lastX + i) > (adc_Xposition + 40))
 		{
-			LCD_DrawLine(lastX + i, adc_Yposition, lastX + i, adc_Yposition + 5, Black);
+			LCD_DrawLine(lastX + i, adc_Yposition, lastX + i, adc_Yposition + 10, Black);
 		}
 		/* Set new paddle */
 		if((adc_Xposition + i) < lastX || (adc_Xposition + i) > (lastX + 40))
 		{
-			LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 5, Green);
+			LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 10, Green);
 		}
 	}
 	

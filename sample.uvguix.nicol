@@ -93,18 +93,18 @@
       <flags>2</flags>
       <showCmd>3</showCmd>
       <MinPosition>
-        <xPos>-1</xPos>
-        <yPos>-1</yPos>
+        <xPos>-32000</xPos>
+        <yPos>-32000</yPos>
       </MinPosition>
       <MaxPosition>
         <xPos>-1</xPos>
         <yPos>-1</yPos>
       </MaxPosition>
       <NormalPosition>
-        <Top>0</Top>
-        <Left>-6</Left>
-        <Right>1146</Right>
-        <Bottom>623</Bottom>
+        <Top>34</Top>
+        <Left>361</Left>
+        <Right>1513</Right>
+        <Bottom>657</Bottom>
       </NormalPosition>
     </WindowPosition>
     <MDIClientArea>
@@ -3607,7 +3607,7 @@
       <Doc>
         <Name>.\sample.c</Name>
         <ColumnNumber>0</ColumnNumber>
-        <TopLine>33</TopLine>
+        <TopLine>41</TopLine>
         <CurrentLine>42</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
@@ -3642,9 +3642,9 @@
       </Doc>
       <Doc>
         <Name>.\RIT\IRQ_RIT.c</Name>
-        <ColumnNumber>0</ColumnNumber>
-        <TopLine>1</TopLine>
-        <CurrentLine>111</CurrentLine>
+        <ColumnNumber>13</ColumnNumber>
+        <TopLine>82</TopLine>
+        <CurrentLine>97</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -3660,17 +3660,17 @@
       </Doc>
       <Doc>
         <Name>.\MyLib\functs.c</Name>
-        <ColumnNumber>29</ColumnNumber>
-        <TopLine>70</TopLine>
-        <CurrentLine>78</CurrentLine>
+        <ColumnNumber>0</ColumnNumber>
+        <TopLine>223</TopLine>
+        <CurrentLine>54</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>.\adc\IRQ_adc.c</Name>
-        <ColumnNumber>39</ColumnNumber>
-        <TopLine>63</TopLine>
+        <ColumnNumber>35</ColumnNumber>
+        <TopLine>53</TopLine>
         <CurrentLine>29</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
@@ -3697,8 +3697,8 @@
       <Doc>
         <Name>.\GLCD\GLCD.c</Name>
         <ColumnNumber>0</ColumnNumber>
-        <TopLine>145</TopLine>
-        <CurrentLine>154</CurrentLine>
+        <TopLine>66</TopLine>
+        <CurrentLine>75</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
