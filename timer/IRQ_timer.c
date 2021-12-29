@@ -20,20 +20,26 @@
 ** Returned value:		None
 **
 ******************************************************************************/
-extern unsigned char led_value;					/* defined in funct_led								*/
+uint16_t SinTable[45] =                                       /* ÕýÏÒ±í                       */
+{
+    410, 467, 523, 576, 627, 673, 714, 749, 778,
+    799, 813, 819, 817, 807, 789, 764, 732, 694, 
+    650, 602, 550, 495, 438, 381, 324, 270, 217,
+    169, 125, 87 , 55 , 30 , 12 , 2  , 0  , 6  ,   
+    20 , 41 , 70 , 105, 146, 193, 243, 297, 353
+};
 void TIMER0_IRQHandler (void)
 {
-	static uint8_t position = 7;
-	LED_Off(position);
-	if(position == 7)
-		position = 2;
-	else
-		position++;
-	LED_On(position);
-	/* alternatively to LED_On and LED_off try to use LED_Out */
-	//LED_Out((1<<position)|(led_value & 0x3));							
-	/* LED_Out is CRITICAL due to the shared led_value variable */
-	/* LED_Out MUST NOT BE INTERRUPTED */
+	static int ticks=0;
+	/* DAC management */
+	LPC_DAC->DACR = SinTable[ticks]<<6;
+	ticks++;
+	LPC_TIM0->MR1 = ticks;
+	if(ticks==45)
+	{
+		ticks=0;
+		disable_timer(0);
+	}
 	
   LPC_TIM0->IR = 1;			/* clear interrupt flag */
   return;

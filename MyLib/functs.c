@@ -1,4 +1,5 @@
 #include "functs.h"
+#include "../timer/timer.h"
 
 /* Potentiometer edge positions */
 #define MIN_POT 6
@@ -202,7 +203,10 @@ void MoveBall()
 			{
 				x_new = x_old;
 				y_new = y_old;
-				LPC_DAC->DACR = 400;
+				disable_timer(0);
+				reset_timer(0);
+				init_timer(0,1263);
+				enable_timer(0);
 			}
 			/* If the ball is on one of the two potentiometer top angles */
 			else if(ball_Xpos == adc_Xposition && (ball_Ypos == (adc_Yposition - 4 || (ball_Ypos - 4) == adc_Yposition)))
@@ -210,22 +214,33 @@ void MoveBall()
 				x_new = x_old;
 				y_new = y_old;
 				IncrementScore();
-				LPC_DAC->DACR = 700<<6;
+				disable_timer(0);
+				reset_timer(0);
+				init_timer(0,1062);
+				enable_timer(0);
 			}
 			/* If the ball's on one of the two lateral walls or on the side of the paddle*/
 			else
 			{
 				x_new = x_old;
 				y_new = 2 * ball_Ypos - y_old;
-				LPC_DAC->DACR = 400<<6;
+				disable_timer(0);
+				reset_timer(0);
+				init_timer(0,1263);
+				enable_timer(0);
 			}
+			
+			
 		}
 		else if(ball_Ypos - 4 <= MIN_BALLY)
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = y_old;
 			/* Low pitch tone */
-			LPC_DAC->DACR = 400<<6;
+			disable_timer(0);
+			reset_timer(0);
+			init_timer(0,1263);
+			enable_timer(0);
 		}
 		/* if the ball is touching the top of the paddle */
 		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
@@ -255,14 +270,16 @@ void MoveBall()
 			}
 			
 			IncrementScore();
-			LPC_DAC->DACR = 700<<6;
+			disable_timer(0);
+			reset_timer(0);
+			init_timer(0,1062);
+			enable_timer(0);
 		}
 		/* In each other case, when the ball is in the middle of the display */
 		else
 		{
 			x_new = 2 * ball_Xpos - x_old;
 			y_new = 2 * ball_Ypos - y_old;
-			LPC_DAC->DACR = 0;
 		}
 		
 		/* Just to be sure that the number is still visible */
