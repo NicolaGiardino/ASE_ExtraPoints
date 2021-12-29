@@ -96,7 +96,7 @@ void RIT_IRQHandler (void)
 						if(reset != 1)
 						{
 							lost = 0;
-							score = 0;
+							score += 95;
 							GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start  ", Black, Black);
 							DrawLateralLines();
 							LCD_PutInt(6, MAX_Y / 2, score, White, Black);
