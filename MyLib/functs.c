@@ -357,5 +357,5 @@ void GameLost()
 			init_timer(0,2048);
 			enable_timer(0);
 			GUI_Text(MAX_X/2 - 100, MAX_Y / 2 + 15, "Press INT0 to Reset", White, Black);
-			
+			NVIC_EnableIRQ(EINT0_IRQn);
 }

@@ -19,8 +19,8 @@
   A/D IRQ: Executed when A/D Conversion is ready (signal from ADC peripheral)
  *----------------------------------------------------------------------------*/
 
-#define MAX_PADDLE 0xD60 /* 641 decimal */
-#define MIN_PADDLE 0x281 /* 3424 decimal */
+#define MAX_PADDLE 0xD60 /* 3424 decimal */
+#define MIN_PADDLE 0x281 /* 641 decimal */
 
 unsigned short AD_current;   
 unsigned short AD_last = 0xFF;     /* Last converted value               */
@@ -92,7 +92,6 @@ void ADC_IRQHandler(void) {
 	{
 		AD_last = AD_current;
 		MovePotentiometer();
-		MoveBall();
   }	
-	
+	MoveBall();
 }

@@ -51,7 +51,8 @@ void RIT_IRQHandler (void)
 		{				
 			switch(int0){
 				case 2:
-						/* When INT0 is pressed, after having lost a game
+						/* 
+						 * When INT0 is pressed, after having lost a game
 						 * it sets reset to zero and reactivates the IRQ of KEY1
 						 */
 						if(reset == 1 && start == 0)
@@ -89,7 +90,8 @@ void RIT_IRQHandler (void)
 			switch(key1)
 			{
 				case 2:
-						/* If the KEY1 button is pressed at the beginning or after INT0
+						/* 
+						 * If the KEY1 button is pressed at the beginning or after INT0
 						 * it sets start to 1, allowing the game to be played,
 						 * initiates the ADC and then... (follows in the else)
 						 */
@@ -109,6 +111,7 @@ void RIT_IRQHandler (void)
 							start = 1;
 							ADC_init();
 							LCD_PutInt(MAX_X - 35, 6, record, White, Black);
+							NVIC_DisableIRQ(EINT0_IRQn);
 						}
 					break;
 				default:
@@ -119,7 +122,8 @@ void RIT_IRQHandler (void)
 		else 
 		{
 			key1=0;	
-			/* If the button has been truly pressed
+			/*
+			 * If the button has been truly pressed
 			 * it disables the IRQ for KEY1
 			 */
 			if(!start)
@@ -144,21 +148,21 @@ void RIT_IRQHandler (void)
 					{
 						switch(stop)
 						{
-							/* If the game wasn't previously stopped
+							/*
+							 * If the game wasn't previously stopped
 							 * it disables the IRQ of INT0, stops the ADC and enters the loop
 							 */
 							case 0: 
 								stop = 1;
-								NVIC_DisableIRQ(EINT0_IRQn);
 								LPC_PINCON->PINSEL4    &= ~(1 << 20);
 							  NVIC_DisableIRQ(ADC_IRQn);
 								break;
-							/* If the game was previously stopped
+							/*
+							 * If the game was previously stopped
 							 * it enables the IRQ of INT0, reactivates the ADC and exits the loop
 							 */
 							case 1:
 								stop = 0;
-								NVIC_EnableIRQ(EINT0_IRQn);
 								NVIC_EnableIRQ(ADC_IRQn);
 								LPC_PINCON->PINSEL4    |= (1 << 20);
 								break;
@@ -185,18 +189,25 @@ void RIT_IRQHandler (void)
 			key2++;
 	}
 	
+	/* Handle the pong game if it has started */
 	if(start == 1)
 	{
 		ADC_start_conversion();
 	}
+	/* If the game has started and the game is lost */
 	else if(!start && reset == 1 && !lost)
 	{
 		GameLost();
 		lost = 1;
 	}
 	
+#ifdef SIMULATOR
 	if(LPC_RIT->RICOUNTER > 0x004C4B40 / ScaleFlag)
 		LPC_RIT->RICOUNTER = 0;
+#else
+	if(LPC_RIT->RICOUNTER > 0x004C4B40)
+		LPC_RIT->RICOUNTER = 0;
+#endif
 	
   LPC_RIT->RICTRL |= 0x1;
 	

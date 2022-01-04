@@ -29,12 +29,6 @@ extern unsigned char led_value;					/* defined in lib_led								*/
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
 #endif
 
-
-
-extern int start, stop, reset;
-extern int score, record;
-extern uint16_t adc_Xposition, adc_Yposition;
-
 /*----------------------------------------------------------------------------
   Main Program
  *----------------------------------------------------------------------------*/
