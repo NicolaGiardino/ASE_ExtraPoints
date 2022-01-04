@@ -245,9 +245,9 @@ void MoveBall()
 		/* if the ball is touching the top of the paddle */
 		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
 		{
-			/* The next position varies on the speed of the paddle, 
+			/* 
+			 * The next position varies on the speed of the paddle, 
 			 * calculated using its previous and next position 
-			 * divided by a factor of 100
 			 */
 			speed = (int)(adc_Xposition - adc_Xold);
 			x_new = (2 * ball_Xpos - x_old);
