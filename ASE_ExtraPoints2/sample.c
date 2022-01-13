@@ -18,6 +18,7 @@
 #include "LPC17xx.H"                    /* LPC17xx definitions                */
 #include "button_EXINT/button.h"
 #include "GLCD/GLCD.h" 
+#include "GLCD/AsciiLib.h" 
 #include "TouchPanel/TouchPanel.h"
 #include "timer/timer.h"
 #include "RIT/RIT.h"

@@ -26,10 +26,10 @@ unsigned short AD_current;
 unsigned short AD_last = 0xFF;     /* Last converted value               */
 
 uint16_t adc_Xposition = MAX_X / 2 - 20;
-uint16_t adc_Yposition = MAX_Y - 33;
+uint16_t adc_Yposition = MAX_Y - 31;
 
 uint16_t bot_Xposition = 16;
-uint16_t bot_Yposition = 32;
+uint16_t bot_Yposition = 31;
 
 static uint16_t lastX;
 
@@ -74,14 +74,14 @@ void MovePotentiometer()
 	for(i = 0; i < 40; i++)
 	{
 		/* Clear last paddle */
-		if((lastX + i) < adc_Xposition || (lastX + i) > (adc_Xposition + 40))
+		if((lastX + i) < adc_Xposition || (lastX + i) > (adc_Xposition + 39))
 		{
-			LCD_DrawLine(lastX + i, adc_Yposition, lastX + i, adc_Yposition + 10, Black);
+			LCD_DrawLine(lastX + i, adc_Yposition, lastX + i, adc_Yposition + 9, Black);
 		}
 		/* Set new paddle */
-		if((adc_Xposition + i) < lastX || (adc_Xposition + i) > (lastX + 40))
+		if((adc_Xposition + i) < lastX || (adc_Xposition + i) > (lastX + 39))
 		{
-			LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 10, Green);
+			LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 9, Green);
 		}
 	}
 	
@@ -122,17 +122,17 @@ void MoveBot()
 	for(i = 0; i < 40; i++)
 	{
 		/* Clear last paddle */
-		if((prevBotX + i) < bot_Xposition || (prevBotX + i) > (bot_Xposition + 40))
+		if((prevBotX + i) < bot_Xposition || (prevBotX + i) > (bot_Xposition + 39))
 		{
-			LCD_DrawLine(prevBotX + i, bot_Yposition - 10, prevBotX + i, bot_Yposition, Black);
+			LCD_DrawLine(prevBotX + i, bot_Yposition - 9, prevBotX + i, bot_Yposition, Black);
 		}
 	}
 	for(i = 0; i < 40; i++)
 	{
 		/* Set new paddle */
-		if((bot_Xposition + i) < prevBotX || (bot_Xposition + i) > (prevBotX + 40))
+		if((bot_Xposition + i) < prevBotX || (bot_Xposition + i) > (prevBotX + 39))
 		{
-			LCD_DrawLine(bot_Xposition + i, bot_Yposition - 10, bot_Xposition + i, bot_Yposition, Green);
+			LCD_DrawLine(bot_Xposition + i, bot_Yposition - 9, bot_Xposition + i, bot_Yposition, Green);
 		}
 	}
 	

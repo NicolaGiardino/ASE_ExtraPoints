@@ -21,6 +21,99 @@ int score[2] = {0, 0};
 
 /********************************************************************************
 *                                                                               *
+* FUNCTION NAME: PutCharReverse 	                                              *
+*                                                                               *
+* PURPOSE: Print a reverse char on the LCD																			*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+* Xpos			uint16_t		 I			Initial X position															*
+*	Ypos			uint16_t		 I			Initial Y position															*
+*	ASCI			uint8_t			 I			Char to print on the LCD												*
+*	charColor	uint16_t		 I			Color to print the number												*
+*	bkColor		uint16_t		 I			Color to print the background										*
+*																																								*
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
+
+void PutCharReverse( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor )
+{
+	uint16_t i, j;
+    uint8_t buffer[16], tmp_char;
+    GetASCIICode(buffer,ASCI);  /* 取字模数据 */
+    for( i=0; i<16; i++ )
+    {
+        tmp_char = buffer[15 - i];
+        for( j=0; j<8; j++ )
+        {
+            if( ((tmp_char >> (j)) & 0x01) == 0x01 )
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, charColor );  /* 字符颜色 */
+            }
+            else
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  /* 背景颜色 */
+            }
+        }
+    }
+}
+
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: GUI_Text_Reverse                                               *
+*                                                                               *
+* PURPOSE: Print a reverse string on the LCD																		*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+* Xpos			uint16_t		 I			Initial X position															*
+*	Ypos			uint16_t		 I			Initial Y position															*
+*	str				uint8_t*		 I			String to print on the LCD											*
+*	Color		  uint16_t		 I			Color to print the number												*
+*	bkColor		uint16_t		 I			Color to print the background										*
+*																																								*
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
+
+void GUI_Text_Reverse(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor)
+{
+    uint8_t TempChar;
+		size_t i = 0;
+    do
+    {
+				i++;
+        TempChar = *str++;     
+    }
+    while ( *str != 0 );
+		TempChar = *str--;
+		do
+		{
+				TempChar = *str--;
+				PutCharReverse( Xpos, Ypos, TempChar, Color, bkColor );    
+        if( Xpos < MAX_X - 8 )
+        {
+            Xpos += 8;
+        } 
+        else if ( Ypos < MAX_Y - 16 )
+        {
+            Xpos = 0;
+            Ypos += 16;
+        }   
+        else
+        {
+            Xpos = 0;
+            Ypos = 0;
+        } 
+				i--;
+		} while( i != 0);
+}
+
+/********************************************************************************
+*                                                                               *
 * FUNCTION NAME: DrawLateralLines                                               *
 *                                                                               *
 * PURPOSE: Draw the red lateral lines																						*
@@ -91,6 +184,34 @@ void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, ui
 
 /********************************************************************************
 *                                                                               *
+* FUNCTION NAME: LCD_PutInt_Reverse                                             *
+*                                                                               *
+* PURPOSE: Print a reverse number on the LCD																		*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+* Xpos			uint16_t		 I			Initial X position															*
+*	Ypos			uint16_t		 I			Initial Y position															*
+*	number		int					 I			Number to print on the LCD											*
+*	charColor	uint16_t		 I			Color to print the number												*
+*	bkColor		uint16_t		 I			Color to print the background										*
+*																																								*
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
+void LCD_PutInt_Reverse(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, uint16_t bkColor)
+{
+		char ascii[8];
+		sprintf(ascii,"%d",number);
+		if(number < 10)
+		{
+			PutCharReverse(Xpos, Ypos, ascii[0], charColor, bkColor);
+		}
+}
+
+/********************************************************************************
+*                                                                               *
 * FUNCTION NAME: IncrementScore		                                              *
 *                                                                               *
 * PURPOSE: Increment the score of the game																			*
@@ -111,7 +232,7 @@ void IncrementScore(uint16_t player)
 	}
 	else if(player == BOT)
 	{
-		LCD_PutInt(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
+		LCD_PutInt_Reverse(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
 	}
 	if(score[player] == 5)
 	{
@@ -186,7 +307,7 @@ void MoveBall()
 		/* Calculate next position */
 		if(ball_Xpos >= MAX_BALLX || (ball_Xpos - 4) <= MIN_BALLX || 
 			((ball_Ypos < (adc_Yposition - 4 && (ball_Ypos - 4) > adc_Yposition)) 
-			&& (ball_Xpos == (adc_Xposition + 40) || (ball_Xpos - 4) == adc_Xposition)))
+			&& (ball_Xpos == (adc_Xposition + 39) || (ball_Xpos - 4) == adc_Xposition)))
 		{
 			/* If the ball's in one of the two top edges */
 			if(ball_Ypos - 4 <= MIN_BALLY)
@@ -235,7 +356,7 @@ void MoveBall()
 			enable_timer(0);
 		}
 		/* if the ball is touching the top of the USER paddle */
-		else if((ball_Ypos <= adc_Yposition - 4 && ball_Ypos > adc_Yposition - 10) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
+		else if((ball_Ypos <= adc_Yposition - 4 && ball_Ypos > adc_Yposition - 9) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 39)))
 		{
 			/* 
 			 * The next position varies on the speed of the paddle, 
@@ -266,7 +387,7 @@ void MoveBall()
 			enable_timer(0);
 		}
 		/* if the ball is touching the top of the BOT paddle */
-		else if((ball_Ypos - 4 <= bot_Yposition && ball_Ypos - 4 > bot_Yposition - 10) && (ball_Xpos > bot_Xposition && (ball_Xpos - 4) < (bot_Xposition + 40)))
+		else if((ball_Ypos - 4 <= bot_Yposition && ball_Ypos - 4 > bot_Yposition - 9) && (ball_Xpos > bot_Xposition && (ball_Xpos - 4) < (bot_Xposition + 39)))
 		{
 			/* 
 			 * The next position varies on the speed of the paddle, 
@@ -381,11 +502,11 @@ void GameLost(uint16_t player)
 			if(player == USER)
 			{
 				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 + 50, "You Win", White, Black);
-				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Lose", White, Black);
+				GUI_Text_Reverse(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Lose", White, Black);
 			}
 			else
 			{
-				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Win", White, Black);
+				GUI_Text_Reverse(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Win", White, Black);
 				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 + 50, "You Lose", White, Black);
 			}
 			disable_timer(0);

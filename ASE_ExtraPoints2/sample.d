@@ -16,5 +16,6 @@
 .\sample.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\sample.o: led/led.h
 .\sample.o: button_EXINT/button.h
+.\sample.o: GLCD/AsciiLib.h
 .\sample.o: timer/timer.h
 .\sample.o: RIT/RIT.h

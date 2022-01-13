@@ -106,7 +106,7 @@ void RIT_IRQHandler (void)
 							/* Init Paddle position */
 							for(i = 0; i < 40; i++)
 							{
-								LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 10, Green);
+								LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 9, Green);
 							}
 							InitBall();
 							start = 1;
