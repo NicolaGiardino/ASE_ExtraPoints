@@ -25,8 +25,7 @@
 ******************************************************************************/
 
 
-extern int score;
-extern int record;
+extern int score[2];
 extern uint8_t ScaleFlag;
 extern uint16_t adc_Xposition, adc_Yposition;
 
@@ -98,10 +97,12 @@ void RIT_IRQHandler (void)
 						if(reset != 1)
 						{
 							lost = 0;
-							score = 0;
+							score[USER] = 0;
+							score[BOT] = 0;
 							GUI_Text(MAX_X / 2 - 100, MAX_Y / 2, "Press KEY1 to Start  ", Black, Black);
 							DrawLateralLines();
-							LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+							LCD_PutInt(6, MAX_Y / 2, score[USER], White, Black);
+							LCD_PutInt(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
 							/* Init Paddle position */
 							for(i = 0; i < 40; i++)
 							{
@@ -110,7 +111,6 @@ void RIT_IRQHandler (void)
 							InitBall();
 							start = 1;
 							ADC_init();
-							LCD_PutInt(MAX_X - 35, 6, record, White, Black);
 							NVIC_DisableIRQ(EINT0_IRQn);
 						}
 					break;
@@ -197,7 +197,6 @@ void RIT_IRQHandler (void)
 	/* If the game has started and the game is lost */
 	else if(!start && reset == 1 && !lost)
 	{
-		GameLost();
 		lost = 1;
 	}
 	

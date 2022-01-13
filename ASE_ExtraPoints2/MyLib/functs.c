@@ -1,26 +1,12 @@
 #include "functs.h"
 #include "../timer/timer.h"
 
-/* Potentiometer edge positions */
-#define MIN_POT 6
-#define MAX_POT MAX_X - 6
-
-/* Ball edge positions on both axis */
-#define MIN_BALLX 6
-#define MAX_BALLX MAX_X - 6
-
-#define MIN_BALLY 6
-#define MAX_BALLY MAX_Y - 33
-
-/* Player ID */
-#define USER	0
-#define BOT		1
-
 /* Defined in the RIT timer library */
 extern int start, reset, stop;
 
 /* Defined in the adc library */
 extern uint16_t adc_Xposition, adc_Yposition;
+extern uint16_t bot_Xposition, bot_Yposition;
 
 /* Old position of the ball */
 uint16_t x_old = MAX_X - 6;
@@ -30,8 +16,7 @@ uint16_t y_old = MAX_Y / 2;
 uint16_t ball_Xpos;
 uint16_t ball_Ypos;
 
-int score[2] = 0;
-int record = 100;
+int score[2] = {0, 0};
 
 
 /********************************************************************************
@@ -119,23 +104,18 @@ void LCD_PutInt(uint16_t Xpos, uint16_t Ypos, int number, uint16_t charColor, ui
 ********************************************************************************/
 void IncrementScore(uint16_t player)
 {
-	if(score[player] >= 100)
+	score[player] += 1;
+	if(player == USER)
 	{
-		score[player] += 10;
-		record = score[player];
-		LCD_PutInt(MAX_X - 35, 6, record, White, Black);
+		LCD_PutInt(6, MAX_Y / 2, score[USER], White, Black);
 	}
-	else
+	else if(player == BOT)
 	{
-		score += 5;
+		LCD_PutInt(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
 	}
-	if(player == 0)
+	if(score[player] == 5)
 	{
-		LCD_PutInt(6, MAX_Y / 2, score[0], White, Black);
-	}
-	else if(player == 1)
-	{
-		LCD_PutInt(MAX_Y - 35 - 6, MAX_Y / 2, score[1], White, Black);
+		GameLost(player);
 	}
 }
 
@@ -189,7 +169,7 @@ void MoveBall()
 {
 		
 	  static uint16_t x_new, y_new;
-		static uint16_t adc_Xold;
+		static uint16_t adc_Xold, bot_Xold;
 		static int speed;
 		size_t i;
 		for(i = 0; i < 5; i++)
@@ -223,7 +203,8 @@ void MoveBall()
 			{
 				x_new = x_old;
 				y_new = y_old;
-				IncrementScore(USER);
+				
+				//IncrementScore(USER);
 				disable_timer(0);
 				reset_timer(0);
 				init_timer(0,1062);
@@ -253,8 +234,8 @@ void MoveBall()
 			init_timer(0,1263);
 			enable_timer(0);
 		}
-		/* if the ball is touching the top of the paddle */
-		else if((ball_Ypos == adc_Yposition - 4) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
+		/* if the ball is touching the top of the USER paddle */
+		else if((ball_Ypos <= adc_Yposition - 4 && ball_Ypos > adc_Yposition - 10) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 40)))
 		{
 			/* 
 			 * The next position varies on the speed of the paddle, 
@@ -279,8 +260,37 @@ void MoveBall()
 					x_new = (x_new - 1 == x_old) ? x_new : x_new - 1;
 				}
 			}
+			disable_timer(0);
+			reset_timer(0);
+			init_timer(0,1062);
+			enable_timer(0);
+		}
+		/* if the ball is touching the top of the BOT paddle */
+		else if((ball_Ypos - 4 <= bot_Yposition && ball_Ypos - 4 > bot_Yposition - 10) && (ball_Xpos > bot_Xposition && (ball_Xpos - 4) < (bot_Xposition + 40)))
+		{
+			/* 
+			 * The next position varies on the speed of the paddle, 
+			 * calculated using its previous and next position 
+			 */
+			speed = (int)(bot_Xposition - bot_Xold);
+			x_new = (2 * ball_Xpos - x_old);
+			y_new = y_old;
 			
-			IncrementScore(USER);
+			if((int)(ball_Xpos - x_old) < 0)
+			{
+				y_new = (y_new - 1 == y_old) ? y_new : y_new - 1;
+			}
+			else if((int)(ball_Xpos - x_old) > 0)
+			{
+				if(speed > 0)
+				{
+					x_new = (x_new + 1 == x_old) ? x_new : x_new + 1;
+				}
+				else
+				{
+					x_new = (x_new - 1 == x_old) ? x_new : x_new - 1;
+				}
+			}
 			disable_timer(0);
 			reset_timer(0);
 			init_timer(0,1062);
@@ -294,14 +304,14 @@ void MoveBall()
 		}
 		
 		/* Just to be sure that the number is still visible */
-		if(ball_Xpos < 27 && (ball_Ypos < MAX_Y / 2 && ball_Xpos > MAX_Y / 2 + 9))
+		if(ball_Xpos < 27 && (ball_Ypos < MAX_Y / 2 && ball_Ypos > MAX_Y / 2 + 9))
 		{
-			LCD_PutInt(6, MAX_Y / 2, score, White, Black);
+			LCD_PutInt(6, MAX_Y / 2, score[USER], White, Black);
 		}
-		else if((ball_Xpos > MAX_X - 35 && ball_Xpos < MAX_X - 6) && (ball_Ypos > 5 && ball_Ypos  < 14))
+		else if(ball_Xpos > MAX_X - 35 - 6  && (ball_Ypos < MAX_Y / 2 && ball_Ypos > MAX_Y / 2 + 9))
 		{
-			LCD_PutInt(MAX_X - 35, 6, record, White, Black);
-		}			
+			LCD_PutInt(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
+		}
 		/* Just to keep the integrity of the game environment */
 		if(x_old <= MIN_BALLX)
 		{
@@ -332,10 +342,16 @@ void MoveBall()
 		ball_Ypos = y_new;
 		adc_Xold = adc_Xposition;
 		
-		/* If the position is lower than the end of the paddle, than it's game over */
+		/* If the position is lower than the end of the paddle, than it's point to the respective player */
 		if(ball_Ypos - 4 > MAX_BALLY)
 		{
-			GameLost();
+			IncrementScore(BOT);
+			InitBall();
+		} 
+		else if(ball_Ypos < MAX_BALL_BOT)
+		{
+			IncrementScore(USER);
+			InitBall();
 		}
 }
 
@@ -353,7 +369,7 @@ void MoveBall()
 * RETURN VALUE: void                                                            *
 *                                                                               *
 ********************************************************************************/
-void GameLost()
+void GameLost(uint16_t player)
 {
 			/* Put reset to 1 and start to zero, 
 			 * then print the losing message
@@ -362,7 +378,14 @@ void GameLost()
 			 */
 			reset = 1;
 			start = 0;
-			GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+			if(player == USER)
+			{
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Win", White, Black);
+			}
+			else
+			{
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+			}
 			disable_timer(0);
 			reset_timer(0);
 			init_timer(0,2048);

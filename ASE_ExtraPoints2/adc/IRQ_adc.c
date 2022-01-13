@@ -28,6 +28,9 @@ unsigned short AD_last = 0xFF;     /* Last converted value               */
 uint16_t adc_Xposition = MAX_X / 2 - 20;
 uint16_t adc_Yposition = MAX_Y - 33;
 
+uint16_t bot_Xposition = 16;
+uint16_t bot_Yposition = 32;
+
 static uint16_t lastX;
 
 /********************************************************************************
@@ -84,6 +87,59 @@ void MovePotentiometer()
 	
 }
 
+/********************************************************************************
+*                                                                               *
+* FUNCTION NAME: MovePotentiometer                                              *
+*                                                                               *
+* PURPOSE: Function to move the paddle of the bot 															*
+* ARGUMENT LIST:                                                                *
+*                                                                               *
+* Argument  Type         IO     Description                                     *
+* --------- --------     --     ---------------------------------               *
+*                                                                               *
+* RETURN VALUE: void                                                            *
+*                                                                               *
+********************************************************************************/
+static uint16_t prevBotX = MAX_X - 46;
+static int16_t sign = 1;
+void MoveBot()
+{
+	size_t i;
+	
+	bot_Xposition = sign > 0 ? bot_Xposition + 2 : (uint16_t)((int16_t)bot_Xposition - 2);
+	
+	if(bot_Xposition < 8)
+	{
+		bot_Xposition = 6;
+		sign = 1;
+	}
+	else if(bot_Xposition > MAX_X - 48)
+	{
+		bot_Xposition = MAX_X - 46;
+		sign = -1;
+	}
+	
+	for(i = 0; i < 40; i++)
+	{
+		/* Clear last paddle */
+		if((prevBotX + i) < bot_Xposition || (prevBotX + i) > (bot_Xposition + 40))
+		{
+			LCD_DrawLine(prevBotX + i, bot_Yposition - 10, prevBotX + i, bot_Yposition, Black);
+		}
+	}
+	for(i = 0; i < 40; i++)
+	{
+		/* Set new paddle */
+		if((bot_Xposition + i) < prevBotX || (bot_Xposition + i) > (prevBotX + 40))
+		{
+			LCD_DrawLine(bot_Xposition + i, bot_Yposition - 10, bot_Xposition + i, bot_Yposition, Green);
+		}
+	}
+	
+	prevBotX = bot_Xposition;
+	
+}
+
 
 void ADC_IRQHandler(void) {
   	
@@ -93,5 +149,6 @@ void ADC_IRQHandler(void) {
 		AD_last = AD_current;
 		MovePotentiometer();
   }	
+	MoveBot();
 	MoveBall();
 }
