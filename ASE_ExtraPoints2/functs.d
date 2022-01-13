@@ -14,4 +14,5 @@
 .\functs.o: MyLib\../led/led.h
 .\functs.o: MyLib\../adc/adc.h
 .\functs.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\functs.o: MyLib\../GLCD/AsciiLib.h
 .\functs.o: MyLib\../timer/timer.h

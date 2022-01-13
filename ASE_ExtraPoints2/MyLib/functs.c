@@ -1,4 +1,5 @@
 #include "functs.h"
+#include "../GLCD/AsciiLib.h"
 #include "../timer/timer.h"
 
 /* Defined in the RIT timer library */
@@ -17,7 +18,6 @@ uint16_t ball_Xpos;
 uint16_t ball_Ypos;
 
 int score[2] = {0, 0};
-
 
 /********************************************************************************
 *                                                                               *
@@ -380,11 +380,13 @@ void GameLost(uint16_t player)
 			start = 0;
 			if(player == USER)
 			{
-				GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Win", White, Black);
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 + 50, "You Win", White, Black);
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Lose", White, Black);
 			}
 			else
 			{
-				GUI_Text(MAX_X/2 - 50, MAX_Y / 2, "You Lose", White, Black);
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 - 50, "You Win", White, Black);
+				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 + 50, "You Lose", White, Black);
 			}
 			disable_timer(0);
 			reset_timer(0);

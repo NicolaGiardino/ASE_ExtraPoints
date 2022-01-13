@@ -162,7 +162,7 @@ I (C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h)(0x58493F92)
 I (TouchPanel\../TouchPanel/TouchPanel.h)(0x5E131400)
 F (.\MyLib\functs.h)(0x61E069F9)()
-F (.\MyLib\functs.c)(0x61E07E9A)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\functs.o --omf_browse .\functs.crf --depend .\functs.d)
+F (.\MyLib\functs.c)(0x61E08F43)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\functs.o --omf_browse .\functs.crf --depend .\functs.d)
 I (MyLib\functs.h)(0x61E069F9)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x602585E4)
 I (C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\LPC17xx.H)(0x5E1DC4B4)
@@ -178,6 +178,7 @@ I (MyLib\../TouchPanel/TouchPanel.h)(0x5E131400)
 I (MyLib\../led/led.h)(0x5FD98676)
 I (MyLib\../adc/adc.h)(0x61C0DA08)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x602585EE)
+I (MyLib\../GLCD/AsciiLib.h)(0x4CEFE47F)
 I (MyLib\../timer/timer.h)(0x5FD98676)
 F (.\adc\adc.h)(0x61C0DA08)()
 F (.\adc\IRQ_adc.c)(0x61E07EBE)(-c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\RTE\_Target_1-IC:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DLPC175x_6x -D_RTE_ -DSIMULATOR-o .\irq_adc.o --omf_browse .\irq_adc.crf --depend .\irq_adc.d)
