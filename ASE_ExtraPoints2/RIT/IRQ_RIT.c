@@ -27,7 +27,7 @@
 
 extern int score[2];
 extern uint8_t ScaleFlag;
-extern uint16_t adc_Xposition, adc_Yposition;
+extern uint16_t adc_Xposition, adc_Yposition, bot_Xposition, bot_Yposition;
 
 int key2 = 0;
 int key1 = 0;
@@ -107,6 +107,7 @@ void RIT_IRQHandler (void)
 							for(i = 0; i < 40; i++)
 							{
 								LCD_DrawLine(adc_Xposition + i, adc_Yposition, adc_Xposition + i, adc_Yposition + 9, Green);
+								LCD_DrawLine(bot_Xposition + i, bot_Yposition - 9, bot_Xposition + i, bot_Yposition, Green);
 							}
 							InitBall();
 							start = 1;

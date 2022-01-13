@@ -25,6 +25,8 @@
 unsigned short AD_current;   
 unsigned short AD_last = 0xFF;     /* Last converted value               */
 
+extern uint16_t ball_Xpos, ball_Ypos;
+
 uint16_t adc_Xposition = MAX_X / 2 - 20;
 uint16_t adc_Yposition = MAX_Y - 31;
 
@@ -89,7 +91,7 @@ void MovePotentiometer()
 
 /********************************************************************************
 *                                                                               *
-* FUNCTION NAME: MovePotentiometer                                              *
+* FUNCTION NAME: MoveBot					                                              *
 *                                                                               *
 * PURPOSE: Function to move the paddle of the bot 															*
 * ARGUMENT LIST:                                                                *
@@ -106,14 +108,37 @@ void MoveBot()
 {
 	size_t i;
 	
-	bot_Xposition = sign > 0 ? bot_Xposition + 2 : (uint16_t)((int16_t)bot_Xposition - 2);
+	prevBotX = bot_Xposition;
 	
-	if(bot_Xposition < 8)
+	/*
+	 * The paddle of the bot moves at a fixed speed of 4px 
+	 * depending on a sign variable, which changes on a given logic
+	 */	
+	bot_Xposition = sign > 0 ? bot_Xposition + 4 : (uint16_t)((int16_t)bot_Xposition - 4);
+	
+	
+	/* 
+	 * The paddle will move in a fixed space 
+	 * that is between +30 and -30 the actual position of the ball 
+	 * and changes direction when either the and point or the walls are reached
+	 */
+	if(bot_Xposition < ball_Xpos - 34)
+	{
+			bot_Xposition = ball_Xpos - 34;
+			sign = 1;
+	}
+	else if(bot_Xposition > ball_Xpos + 10)
+	{
+			bot_Xposition = ball_Xpos + 10;
+			sign = -1;
+	}
+	
+	if((int16_t)bot_Xposition < 10)
 	{
 		bot_Xposition = 6;
 		sign = 1;
 	}
-	else if(bot_Xposition > MAX_X - 48)
+	else if(bot_Xposition > MAX_X - 50 && bot_Xposition < MAX_X)
 	{
 		bot_Xposition = MAX_X - 46;
 		sign = -1;
@@ -126,17 +151,12 @@ void MoveBot()
 		{
 			LCD_DrawLine(prevBotX + i, bot_Yposition - 9, prevBotX + i, bot_Yposition, Black);
 		}
-	}
-	for(i = 0; i < 40; i++)
-	{
 		/* Set new paddle */
 		if((bot_Xposition + i) < prevBotX || (bot_Xposition + i) > (prevBotX + 39))
 		{
 			LCD_DrawLine(bot_Xposition + i, bot_Yposition - 9, bot_Xposition + i, bot_Yposition, Green);
 		}
 	}
-	
-	prevBotX = bot_Xposition;
 	
 }
 

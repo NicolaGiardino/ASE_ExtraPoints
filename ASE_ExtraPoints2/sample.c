@@ -12,6 +12,15 @@
  * Copyright (c) 2017 Politecnico di Torino. All rights reserved.
  *----------------------------------------------------------------------------*/
 
+/******************************************************************************
+ * This version of the code implements a multiplayer version of the EP1				*
+ *																																						*
+ * Some improvements to the code have been made																*
+ * as well as many bug fixes.																									*
+ *																																						*
+ * Nicola di Gruttola Giardino  																							*
+ * Github:@NicolaGiardino																											*
+ ******************************************************************************/
                   
 #include "MyLib/functs.h"
 #include "led/led.h"

@@ -232,7 +232,7 @@ void IncrementScore(uint16_t player)
 	}
 	else if(player == BOT)
 	{
-		LCD_PutInt_Reverse(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
+		LCD_PutInt_Reverse(MAX_X - 41, MAX_Y / 2, score[BOT], White, Black);
 	}
 	if(score[player] == 5)
 	{
@@ -356,7 +356,7 @@ void MoveBall()
 			enable_timer(0);
 		}
 		/* if the ball is touching the top of the USER paddle */
-		else if((ball_Ypos <= adc_Yposition - 4 && ball_Ypos > adc_Yposition - 9) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 39)))
+		else if((ball_Ypos > adc_Yposition - 4 && ball_Ypos <= adc_Yposition + 9) && (ball_Xpos > adc_Xposition && (ball_Xpos - 4) < (adc_Xposition + 39)))
 		{
 			/* 
 			 * The next position varies on the speed of the paddle, 
@@ -429,7 +429,7 @@ void MoveBall()
 		{
 			LCD_PutInt(6, MAX_Y / 2, score[USER], White, Black);
 		}
-		else if(ball_Xpos > MAX_X - 35 - 6  && (ball_Ypos < MAX_Y / 2 && ball_Ypos > MAX_Y / 2 + 9))
+		else if(ball_Xpos > MAX_X - 41  && (ball_Ypos < MAX_Y / 2 && ball_Ypos > MAX_Y / 2 + 9))
 		{
 			LCD_PutInt(MAX_X - 35 - 6, MAX_Y / 2, score[BOT], White, Black);
 		}
@@ -462,6 +462,7 @@ void MoveBall()
 		ball_Xpos = x_new;
 		ball_Ypos = y_new;
 		adc_Xold = adc_Xposition;
+		bot_Xold = bot_Xposition;
 		
 		/* If the position is lower than the end of the paddle, than it's point to the respective player */
 		if(ball_Ypos - 4 > MAX_BALLY)
@@ -499,6 +500,7 @@ void GameLost(uint16_t player)
 			 */
 			reset = 1;
 			start = 0;
+			/* What is printed on the screen depends on who's the one that loses the game */
 			if(player == USER)
 			{
 				GUI_Text(MAX_X/2 - 50, MAX_Y / 2 + 50, "You Win", White, Black);
