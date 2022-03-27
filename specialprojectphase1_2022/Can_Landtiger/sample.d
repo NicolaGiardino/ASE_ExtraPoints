@@ -15,3 +15,4 @@
 .\sample.o: RIT/RIT.h
 .\sample.o: RIT/../adc/adc.h
 .\sample.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\sample.o: can/can.h

@@ -32,22 +32,26 @@ extern uint32_t SystemFrequency;
 
 /* Clock and Baudrate definitions */
 
-#define CAN1_BAUD_100k(CLK_CAN)	(CLK_CAN / 100000 - 1)
-#define CAN1_BAUD_125k(CLK_CAN)	(CLK_CAN / 125000 - 1)
-#define CAN1_BAUD_250k(CLK_CAN)	(CLK_CAN / 250000 - 1)
-#define CAN1_BAUD_1M(CLK_CAN)	(CLK_CAN / 1000000 - 1)	
+#define CAN_BAUD_100k(CLK_CAN)	(CLK_CAN / 100000 - 1)
+#define CAN_BAUD_125k(CLK_CAN)	(CLK_CAN / 125000 - 1)
+#define CAN_BAUD_250k(CLK_CAN)	(CLK_CAN / 250000 - 1)
+#define CAN_BAUD_1M(CLK_CAN)	(CLK_CAN / 1000000 - 1)	
 
 /* Function prototypes -------------------------------------------------------*/
 
-uint32_t Clk_Can1(uint32_t PCLK_CAN1) { 			
-			if(PCLK_CAN1 == 0) return (SystemFrequency / 4);		
-			else if(PCLK_CAN1 == 0x01) return SystemFrequency;	
-			else if(PCLK_CAN1 == 0x02) return (SystemFrequency / 2);
-			else return (SystemFrequency / 6);}
+uint32_t Clk_Can(uint32_t PCLK_CAN);
 
 int CAN1_Init(const uint32_t baudrate);
 
 int CAN1_Transmit(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+
+int CAN1_Receive(uint16_t id, uint8_t rtr, uint8_t dlc, uint8_t *data);
+
+int CAN2_Init(const uint32_t baudrate);
+
+int CAN2_Transmit(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+
+int CAN2_Receive(uint16_t id, uint8_t rtr, uint8_t dlc, uint8_t *data);
 
 #endif /* end __CAN_H__ */
 /*****************************************************************************
