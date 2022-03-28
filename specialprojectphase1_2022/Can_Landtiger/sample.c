@@ -28,6 +28,8 @@ extern unsigned char led_value;					/* defined in lib_led								*/
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
 #endif
 
+#define RCV 1
+
 int i, j;
 uint8_t data[8];
 uint16_t id, rtr, dlc;
@@ -72,10 +74,13 @@ int main (void)
 	
 	while (1) 
 	{ 
-		
-		CAN1_Transmit(0x01, 0, 1, data);
+#if RCV
 		CAN1_Receive(id, rtr, dlc, data);
+		GUI_Text((j + 20) % 500, 0, "Received", White, Blue);
+#else
+		CAN1_Transmit(0x01, 0, 1, data);
 		GUI_Text((j + 20) % 500, 0, "Sent", White, Blue);
+#endif
 		j++;
 		for(i = 0; i < 10000; i++)
 		{

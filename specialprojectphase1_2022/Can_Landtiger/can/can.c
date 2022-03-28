@@ -102,7 +102,8 @@ int CAN1_Init(const uint32_t baudrate)
 		
 	LPC_CAN1->BTR = ((0x7 & TSEG2) << 20) | ((0xF & TSEG1) << 16) | (3 << 14) | (0x000003FF & brp);
 	
-	LPC_CAN1->MOD |= (0x1 << 2);
+	/* This for  LoopBack*/
+	//LPC_CAN1->MOD |= (0x1 << 2);
 	/* Set CAN Controller in Operating Mode */
 	LPC_CAN1->MOD &= ~(0x1);
  	
@@ -149,7 +150,7 @@ int CAN1_Transmit(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const
 	}
 	
 	/* Set command to send message (TR and SB1) */
-	LPC_CAN1->CMR |= ((0x1 << 4) | (0x1 << 5));
+	LPC_CAN1->CMR |= ((0x1) | (0x1 << 5));
 	
 	/* Check from SR if the TBS bits are zero, so if bus is still transmitting */
 	while((LPC_CAN1->SR & (0x1 << 2)) != (0x1 << 2))
