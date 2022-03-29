@@ -31,8 +31,8 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 #define RCV 1
 
 int i, j;
-uint8_t data[8];
-uint16_t id, rtr, dlc;
+uint8_t data[8], rtr, dlc;
+uint16_t id;
 /*----------------------------------------------------------------------------
   Main Program
  *----------------------------------------------------------------------------*/
@@ -59,7 +59,7 @@ int main (void)
 	//LPC_PINCON->PINSEL1 |= (1<<21);
 	//LPC_PINCON->PINSEL1 &= ~(1<<20);
 	//LPC_GPIO0->FIODIR |= (1<<26);
-	i = CAN1_Init(250000);
+	i = CAN1_Init(250000, 0);
 	
 	GUI_Text(0, 0, "Can send text", White, Blue);
 	
@@ -75,14 +75,14 @@ int main (void)
 	while (1) 
 	{ 
 #if RCV
-		CAN1_Receive(id, rtr, dlc, data);
+		CAN1_Receive(&id, &rtr, &dlc, data);
 		GUI_Text((j + 20) % 500, 0, "Received", White, Blue);
 #else
-		CAN1_Transmit(0x01, 0, 1, data);
+		CAN1_Transmit(1, 0x01, 0, 1, data);
 		GUI_Text((j + 20) % 500, 0, "Sent", White, Blue);
 #endif
 		j++;
-		for(i = 0; i < 10000; i++)
+		for(i = 0; i < 1000; i++)
 		{
 			__asm__("NOP");
 		}
