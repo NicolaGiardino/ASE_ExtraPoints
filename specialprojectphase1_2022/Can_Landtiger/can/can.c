@@ -146,7 +146,7 @@ static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN1->TDA1 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDB1 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -182,7 +182,7 @@ static void CAN1_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN1->TDA2 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDB2 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -218,7 +218,7 @@ static void CAN1_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN1->TDA3 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDB3 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -284,7 +284,7 @@ int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 	}
 	
 	/* Wait for the data to be received */
-	while(!(LPC_CAN1->GSR & ((0x1))))
+	while(!(LPC_CAN1->GSR & ((0x1) | (0x1 << 4))))
 		;
 	
 	/* Set id, rtr and data lenght */
@@ -302,7 +302,7 @@ int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 		}
 		for(i = 4; i < *dlc; i++)
 		{
-			data[i] = (uint8_t)(LPC_CAN1->RDA << (i - 4)*8);
+			data[i] = (uint8_t)(LPC_CAN1->RDB << (i - 4)*8);
 		}
 	}
 	
@@ -410,7 +410,6 @@ int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
 		LPC_CAN2->MOD |= (0x1 << 2);
 	}
 	loopback_can2 = loopback;
-	
 	/* Set CAN Controller in Operating Mode */
 	LPC_CAN2->MOD &= ~(0x1);
  	
@@ -440,7 +439,7 @@ static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN2->TDA1 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDB1 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -476,7 +475,7 @@ static void CAN2_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN2->TDA2 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDB2 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -512,7 +511,7 @@ static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 		}
 		for(i = 4; i < dlc; i++)
 		{
-			LPC_CAN2->TDA3 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDB3 |= (data[i] << (i - 4)*8);
 		}
 	}
 	
@@ -530,7 +529,9 @@ static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Check from GSR if errors are present */
-	uint32_t is_err = LPC_CAN2->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
+	uint32_t is_err;
+	
+	is_err	= LPC_CAN2->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
 	if(is_err)
 	{
 		return -CAN_ERR_BUS;
@@ -576,7 +577,7 @@ int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 	}
 	
 	/* Wait for the data to be received */
-	while(!(LPC_CAN2->GSR & ((0x1 << 4) | (0x1))))
+	while(!(LPC_CAN2->GSR & ((0x1) | (0x1 << 4))))
 		;
 	
 	/* Set id, rtr and data lenght */
@@ -590,11 +591,11 @@ int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 		uint8_t i;
 		for(i = 0; i < *dlc && i < 4; i++)
 		{
-			 data[i] = (uint8_t)(LPC_CAN2->RDA << (i * 8));
+			 data[i] = (uint8_t)(LPC_CAN2->RDA << i*8);
 		}
 		for(i = 4; i < *dlc; i++)
 		{
-			data[i] = (uint8_t)(LPC_CAN2->RDA << ((i - 4) * 8));
+			data[i] = (uint8_t)(LPC_CAN2->RDB << (i - 4)*8);
 		}
 	}
 	

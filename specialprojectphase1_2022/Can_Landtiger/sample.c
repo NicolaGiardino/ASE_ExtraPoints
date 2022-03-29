@@ -68,7 +68,14 @@ int main (void)
 		GUI_Text(0, 20, "Error while sending", White, Blue);
 	}
 	
-	data[0] = 0xc;
+	data[0] = 0x1c;
+	data[1] = 0x2d;
+	data[2] = 0x3d;
+	data[3] = 0x4d;
+	data[4] = 0x5d;
+	data[5] = 0x6d;
+	data[6] = 0x7d;
+	data[7] = 0xfd;
 	
 	j = 0;
 	
@@ -79,6 +86,11 @@ int main (void)
 		GUI_Text((j + 20) % 500, 0, "Received", White, Blue);
 #else
 		CAN1_Transmit(1, 0x01, 0, 1, data);
+		for(i = 0; i < 1000; i++)
+		{
+			__asm__("NOP");
+		}
+		CAN1_Transmit(2, 0x02, 0, 8, data);
 		GUI_Text((j + 20) % 500, 0, "Sent", White, Blue);
 #endif
 		j++;
