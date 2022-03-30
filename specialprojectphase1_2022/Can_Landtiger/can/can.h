@@ -30,6 +30,7 @@ extern uint32_t SystemFrequency;
 #define CAN_ERR_BUS		0x03
 #define CAN_ERR_DLC		0x04
 #define CAN_ERR_STB		0x05
+#define CAN_ERR_AF 		0x06
 
 /* Clock and Baudrate definitions */
 
@@ -59,11 +60,21 @@ int CAN1_Init(const uint32_t baudrate, const uint8_t loopback);
 int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN1_EnableIRQ(uint16_t reg, uint32_t priority);
+void CAN1_DeInit(void);
+int CAN1_AF_Add_StdID(const uint16_t id);
+int CAN1_AF_Remove_StdID(const uint16_t id);
+int CAN1_AF_Enable_StdID(const uint16_t id);
+int CAN1_AF_Disable_StdID(const uint16_t id);
 
 int CAN2_Init(const uint32_t baudrate, const uint8_t loopback);
 int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN2_EnableIRQ(uint16_t reg, uint32_t priority);
+void CAN2_DeInit(void);
+int CAN2_AF_Add_StdID(const uint16_t id);
+int CAN2_AF_Remove_StdID(const uint16_t id);
+int CAN2_AF_Enable_StdID(const uint16_t id);
+int CAN2_AF_Disable_StdID(const uint16_t id);
 
 void CAN_IRQHandler(void);
 #endif /* end __CAN_H__ */
