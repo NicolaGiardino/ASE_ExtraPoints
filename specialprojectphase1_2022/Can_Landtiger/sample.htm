@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\sample.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\sample.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Mar 29 20:27:45 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Mar 31 20:09:08 2022
 <BR><P>
 <H3>Maximum Stack Usage =        152 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -37,7 +37,7 @@ Function Pointers
  <LI><a href="#[24]">BOD_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[7]">BusFault_Handler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[2f]">CANActivity_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
- <LI><a href="#[26]">CAN_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
+ <LI><a href="#[26]">CAN_IRQHandler</a> from irq_can.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[27]">DMA_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[a]">DebugMon_Handler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[1f]">EINT0_IRQHandler</a> from irq_button.o(.text) referenced from startup_lpc17xx.o(RESET)
@@ -291,9 +291,6 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_lpc17xx.o(RESET)
 </UL>
 <P><STRONG><a name="[2f]"></a>CANActivity_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc17xx.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> startup_lpc17xx.o(RESET)
-</UL>
-<P><STRONG><a name="[26]"></a>CAN_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc17xx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_lpc17xx.o(RESET)
 </UL>
 <P><STRONG><a name="[27]"></a>DMA_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc17xx.o(.text))
@@ -652,12 +649,12 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[70]"></a>getDisplayPoint</STRONG> (Thumb, 238 bytes, Stack size 80 bytes, touchpanel.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
-<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<BR><BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2d
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2uiz
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cdcmpeq
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
 </UL>
 
 <P><STRONG><a name="[76]"></a>TouchPanel_Calibrate</STRONG> (Thumb, 160 bytes, Stack size 16 bytes, touchpanel.o(.text), UNUSED)
@@ -691,7 +688,7 @@ Global Symbols
 <LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Init
 </UL>
 
-<P><STRONG><a name="[45]"></a>CAN1_Init</STRONG> (Thumb, 356 bytes, Stack size 32 bytes, can.o(.text))
+<P><STRONG><a name="[45]"></a>CAN1_Init</STRONG> (Thumb, 370 bytes, Stack size 32 bytes, can.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = CAN1_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Clk_Can
@@ -699,13 +696,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[78]"></a>CAN1_Transmit</STRONG> (Thumb, 200 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[78]"></a>CAN1_Transmit</STRONG> (Thumb, 148 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit_STB3
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit_STB2
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit_STB1
 </UL>
 
-<P><STRONG><a name="[47]"></a>CAN1_Receive</STRONG> (Thumb, 144 bytes, Stack size 20 bytes, can.o(.text))
+<P><STRONG><a name="[47]"></a>CAN1_Receive</STRONG> (Thumb, 190 bytes, Stack size 20 bytes, can.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = CAN1_Receive
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -716,23 +713,50 @@ Global Symbols
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 </UL>
 
-<P><STRONG><a name="[7f]"></a>CAN2_Init</STRONG> (Thumb, 356 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[bd]"></a>CAN1_DeInit</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[be]"></a>CAN1_AF_Enable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[bf]"></a>CAN1_AF_Disable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c0]"></a>CAN1_AF_Add_StdID</STRONG> (Thumb, 324 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c1]"></a>CAN1_AF_Remove_StdID</STRONG> (Thumb, 138 bytes, Stack size 12 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c2]"></a>CAN1_AF_Enable_StdID</STRONG> (Thumb, 114 bytes, Stack size 8 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c3]"></a>CAN1_AF_Disable_StdID</STRONG> (Thumb, 114 bytes, Stack size 8 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[7f]"></a>CAN2_Init</STRONG> (Thumb, 420 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Clk_Can
 </UL>
 
-<P><STRONG><a name="[80]"></a>CAN2_Transmit</STRONG> (Thumb, 190 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[80]"></a>CAN2_Transmit</STRONG> (Thumb, 148 bytes, Stack size 32 bytes, can.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit_STB3
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit_STB2
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit_STB1
 </UL>
 
-<P><STRONG><a name="[bd]"></a>CAN2_Receive</STRONG> (Thumb, 144 bytes, Stack size 20 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[c4]"></a>CAN2_Receive</STRONG> (Thumb, 132 bytes, Stack size 20 bytes, can.o(.text), UNUSED)
 
 <P><STRONG><a name="[84]"></a>CAN2_EnableIRQ</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 </UL>
 
+<P><STRONG><a name="[c5]"></a>CAN2_DeInit</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c6]"></a>CAN2_AF_Add_StdID</STRONG> (Thumb, 380 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c7]"></a>CAN2_AF_Remove_StdID</STRONG> (Thumb, 128 bytes, Stack size 8 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c8]"></a>CAN2_AF_Enable_StdID</STRONG> (Thumb, 126 bytes, Stack size 8 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[c9]"></a>CAN2_AF_Disable_StdID</STRONG> (Thumb, 126 bytes, Stack size 8 bytes, can.o(.text), UNUSED)
+
+<P><STRONG><a name="[26]"></a>CAN_IRQHandler</STRONG> (Thumb, 164 bytes, Stack size 0 bytes, irq_can.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc17xx.o(RESET)
+</UL>
 <P><STRONG><a name="[54]"></a>__aeabi_memcpy</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetASCIICode
 </UL>
@@ -741,33 +765,33 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 
-<P><STRONG><a name="[be]"></a>_memcpy_lastbytes</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_v6.o(.text), UNUSED)
+<P><STRONG><a name="[ca]"></a>_memcpy_lastbytes</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_v6.o(.text), UNUSED)
 
 <P><STRONG><a name="[6c]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Read_Ads7846
 </UL>
 
-<P><STRONG><a name="[bf]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
+<P><STRONG><a name="[cb]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[c0]"></a>__rt_memclr_w</STRONG> (Thumb, 78 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
+<P><STRONG><a name="[cc]"></a>__rt_memclr_w</STRONG> (Thumb, 78 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[c1]"></a>_memset_w</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr_w.o(.text), UNUSED)
+<P><STRONG><a name="[cd]"></a>_memset_w</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[c2]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[ce]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[c3]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[cf]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[c4]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[d0]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[86]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memcpy
 </UL>
 
-<P><STRONG><a name="[c5]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[d1]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[c6]"></a>__rt_memcpy_w</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[d2]"></a>__rt_memcpy_w</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[c7]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[d3]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
 
 <P><STRONG><a name="[36]"></a>__user_setup_stackheap</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, sys_stackheap_outer.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
@@ -788,23 +812,23 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[c8]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[d4]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[87]"></a>__user_perproc_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[c9]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[d5]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[3f]"></a>_sys_exit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, sys_exit.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
 </UL>
 
-<P><STRONG><a name="[ca]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[d6]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[cb]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[d7]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[cc]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
+<P><STRONG><a name="[d8]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
 <P><STRONG><a name="[73]"></a>__aeabi_dadd</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, daddsub_clz.o(x$fpl$dadd), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getDisplayPoint
@@ -851,13 +875,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;setCalibrationMatrix
 </UL>
 
-<P><STRONG><a name="[cd]"></a>_dflt</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, dflt_clz.o(x$fpl$dflt), UNUSED)
+<P><STRONG><a name="[d9]"></a>_dflt</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, dflt_clz.o(x$fpl$dflt), UNUSED)
 
 <P><STRONG><a name="[71]"></a>__aeabi_ui2d</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, dflt_clz.o(x$fpl$dfltu), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getDisplayPoint
 </UL>
 
-<P><STRONG><a name="[ce]"></a>_dfltu</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, dflt_clz.o(x$fpl$dfltu), UNUSED)
+<P><STRONG><a name="[da]"></a>_dfltu</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, dflt_clz.o(x$fpl$dfltu), UNUSED)
 
 <P><STRONG><a name="[72]"></a>__aeabi_dmul</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, dmul.o(x$fpl$dmul), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getDisplayPoint
@@ -869,21 +893,21 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[8d]"></a>__fpl_dnaninf</STRONG> (Thumb, 156 bytes, Stack size 16 bytes, dnaninf.o(x$fpl$dnaninf), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ddiv
-<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dsub
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd
-<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dmul
+<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dmul
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dfixu
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dcmpeq
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ddiv
+<LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dsub
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd
 </UL>
 
 <P><STRONG><a name="[8c]"></a>__fpl_dretinf</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, dretinf.o(x$fpl$dretinf), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ddiv
+<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dmul
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ddiv
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd
-<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dmul
 </UL>
 
-<P><STRONG><a name="[cf]"></a>__aeabi_dsub</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, daddsub_clz.o(x$fpl$dsub), UNUSED)
+<P><STRONG><a name="[db]"></a>__aeabi_dsub</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, daddsub_clz.o(x$fpl$dsub), UNUSED)
 
 <P><STRONG><a name="[93]"></a>_dsub</STRONG> (Thumb, 464 bytes, Stack size 32 bytes, daddsub_clz.o(x$fpl$dsub), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
@@ -989,27 +1013,27 @@ Local Symbols
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_EnableIRQ
 </UL>
 
-<P><STRONG><a name="[79]"></a>CAN1_Transmit_STB1</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[79]"></a>CAN1_Transmit_STB1</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit
 </UL>
 
-<P><STRONG><a name="[7a]"></a>CAN1_Transmit_STB2</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[7a]"></a>CAN1_Transmit_STB2</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit
 </UL>
 
-<P><STRONG><a name="[7b]"></a>CAN1_Transmit_STB3</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[7b]"></a>CAN1_Transmit_STB3</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN1_Transmit
 </UL>
 
-<P><STRONG><a name="[81]"></a>CAN2_Transmit_STB1</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[81]"></a>CAN2_Transmit_STB1</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit
 </UL>
 
-<P><STRONG><a name="[82]"></a>CAN2_Transmit_STB2</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[82]"></a>CAN2_Transmit_STB2</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit
 </UL>
 
-<P><STRONG><a name="[83]"></a>CAN2_Transmit_STB3</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
+<P><STRONG><a name="[83]"></a>CAN2_Transmit_STB3</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, can.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN2_Transmit
 </UL>
 

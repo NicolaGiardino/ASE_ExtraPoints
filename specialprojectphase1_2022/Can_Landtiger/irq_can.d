@@ -8,3 +8,4 @@
 .\irq_can.o: C:\Users\nicol\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\mpu_armv7.h
 .\irq_can.o: C:\Users\nicol\AppData\Local\Arm\Packs\Keil\LPC1700_DFP\2.7.0\Device\Include\system_LPC17xx.h
 .\irq_can.o: can\can.h
+.\irq_can.o: can\../GLCD/GLCD.h

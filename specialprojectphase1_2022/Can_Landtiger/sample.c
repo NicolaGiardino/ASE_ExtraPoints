@@ -59,7 +59,7 @@ int main (void)
 	//LPC_PINCON->PINSEL1 |= (1<<21);
 	//LPC_PINCON->PINSEL1 &= ~(1<<20);
 	//LPC_GPIO0->FIODIR |= (1<<26);
-	i = CAN1_Init(250000, 0);
+	i = CAN1_Init(125000, 0);
 	
 	GUI_Text(0, 0, "Can send text", White, Blue);
 	

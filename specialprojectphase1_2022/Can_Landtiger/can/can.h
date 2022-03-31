@@ -61,6 +61,8 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN1_EnableIRQ(uint16_t reg, uint32_t priority);
 void CAN1_DeInit(void);
+void CAN1_AF_Enable(void);
+void CAN1_AF_Disable(void);
 int CAN1_AF_Add_StdID(const uint16_t id);
 int CAN1_AF_Remove_StdID(const uint16_t id);
 int CAN1_AF_Enable_StdID(const uint16_t id);

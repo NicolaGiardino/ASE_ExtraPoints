@@ -56,6 +56,7 @@ int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
 	/* Set CAN peripheral in reset mode */
 	LPC_CAN1->MOD |= 0x1; /* Reset mode - Listen Only 0 - STM 0 - TPM CAN ID - SM Wake-up - RPM dominant 0 - TM Normal op */
 	LPC_CAN1->MOD &= ~(0xE);
+	LPC_CANAF->AFMR |= 0x2;
 	
 	/* Clear Command Register */
 	LPC_CAN1->CMR = 0x0;
@@ -142,11 +143,8 @@ static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN1->TDA1 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN1->TDB1 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDA1 |= (data[i] << (i*8));
+			LPC_CAN1->TDB1 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -178,11 +176,8 @@ static void CAN1_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN1->TDA2 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN1->TDB2 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDA2 |= (data[i] << (i*8));
+			LPC_CAN1->TDB2 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -214,11 +209,8 @@ static void CAN1_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN1->TDA3 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN1->TDB3 |= (data[i] << (i - 4)*8);
+			LPC_CAN1->TDA3 |= (data[i] << (i*8));
+			LPC_CAN1->TDB3 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -238,7 +230,7 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	/* Check from GSR if errors are present */
 	uint32_t is_err;
 	
-	is_err	= LPC_CAN1->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
+	is_err	= LPC_CAN1->GSR & (0xFFFF0080);
 	if(is_err)
 	{
 		return -CAN_ERR_BUS;
@@ -277,7 +269,7 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
-	uint32_t is_err = LPC_CAN1->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
+	uint32_t is_err = LPC_CAN1->GSR & (0xFFFF0080);
 	if(is_err)
 	{
 		return -CAN_ERR_BUS;
@@ -298,11 +290,8 @@ int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 		uint8_t i;
 		for(i = 0; i < *dlc && i < 4; i++)
 		{
-			 data[i] = (uint8_t)(LPC_CAN1->RDA << i*8);
-		}
-		for(i = 4; i < *dlc; i++)
-		{
-			data[i] = (uint8_t)(LPC_CAN1->RDB << (i - 4)*8);
+			 data[i] = (uint8_t)(LPC_CAN1->RDA << (i * 8));
+			 data[i + 4] = (uint8_t)(LPC_CAN1->RDB << (i * 8));
 		}
 	}
 	
@@ -328,10 +317,24 @@ void CAN1_DeInit(void)
 	LPC_PINCON->PINMODE0 &= ~(0xFF | (0xFF << 2));
 }
 
-int CAN1_AFAdd_StdID(const uint16_t id)
+void CAN1_AF_Enable(void)
+{
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR &= ~0x1;
+}
+
+void CAN1_AF_Disable(void)
+{
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= 0x1;
+}
+
+int CAN1_AF_Add_StdID(const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
+	
+	static uint8_t flag = 0;
 	
 	/* Set AF in Bypass Mode */
 	LPC_CANAF->AFMR |= (0x1 << 1);
@@ -348,7 +351,7 @@ int CAN1_AFAdd_StdID(const uint16_t id)
 			}
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 			return CAN_OK;
 		}
@@ -360,7 +363,7 @@ int CAN1_AFAdd_StdID(const uint16_t id)
 			}
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -369,12 +372,11 @@ int CAN1_AFAdd_StdID(const uint16_t id)
 	/* If the table can be filled */
 	if(LPC_CANAF->ENDofTable / 4 != 512)
 	{
-		i = LPC_CANAF->SFF_GRP_sa / 4 - 1;
+		i = LPC_CANAF->SFF_GRP_sa / 4;
 		
 		if((i * 4) != LPC_CANAF->EFF_sa)
 		{
 			uint16_t j;
-			uint32_t temp0, temp1;
 			for(j = LPC_CANAF->EFF_sa / 4 + 1; j > i; j--)
 			{
 				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
@@ -383,32 +385,33 @@ int CAN1_AFAdd_StdID(const uint16_t id)
 		}
 		
 		/* Write in the first available entry */
-		if(LPC_CANAF_RAM->mask[i] & 0xffff)
+		if(!flag)
 		{
-			LPC_CANAF_RAM->mask[i] &= ~(0xFFFF);
+			LPC_CANAF_RAM->mask[i] = 0xFFFF0000;
 			LPC_CANAF_RAM->mask[i] |= (0x7FF & id);
+			flag = 1;
+			/* Increase the starting address */
+			LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
+			LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
+			LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_sa;
+			LPC_CANAF->ENDofTable = LPC_CANAF->EFF_sa;
 		}
-		else if(LPC_CANAF_RAM->mask[i] & 0xffff0000)
+		else
 		{
-			LPC_CANAF_RAM->mask[i] &= ~(0xFFFF0000);
-			LPC_CANAF_RAM->mask[i] |= ((0x7FF & id) << 16);
+			LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF0000);
+			LPC_CANAF_RAM->mask[i - 1] |= ((0x7FF & id) << 16);
+			flag = 0;
 		}
-		
-		/* Increase the starting address */
-		LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
-		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
-		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_sa;
-		LPC_CANAF->ENDofTable = LPC_CANAF->EFF_sa;
 		
 		/* Set AF in Normal Mode */
-		LPC_CANAF->AFMR |= ~(0x1 << 1);
+		LPC_CANAF->AFMR &= ~(0x1 << 1);
 		
 		return CAN_OK;
 	}	
 	
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 	
@@ -428,26 +431,28 @@ int CAN1_AF_Remove_StdID(const uint16_t id)
 		mask = LPC_CANAF_RAM->mask[i];
 		if((mask & 0x7FF) == id)
 		{
-			mask |= 0xFFFF;
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF;
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 		else if((mask & 0x7FF0000) == id)
 		{
-			mask |= 0xFFFF0000;
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF0000;
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
+	/* ToDo: Shift back all entries */
+	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 }
@@ -469,7 +474,7 @@ int CAN1_AF_Enable_StdID(const uint16_t id)
 			mask |= (0x1 << 12);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -478,14 +483,14 @@ int CAN1_AF_Enable_StdID(const uint16_t id)
 			mask |= (0x1 << 28);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 
 	return - CAN_ERR_AF;
 }
@@ -507,7 +512,7 @@ int CAN1_AF_Disable_StdID(const uint16_t id)
 			mask |= ~(0x1 << 12);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -516,14 +521,14 @@ int CAN1_AF_Disable_StdID(const uint16_t id)
 			mask |= ~(0x1 << 28);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 }	
@@ -556,6 +561,7 @@ int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
 	/* Set CAN peripheral in reset mode */
 	LPC_CAN2->MOD |= 0x1; /* Reset mode - Listen Only 0 - STM 0 - TPM CAN ID - SM Wake-up - RPM dominant 0 - TM Normal op */
 	LPC_CAN2->MOD &= ~(0xE);
+	LPC_CANAF->AFMR |= 0x2;
 	
 	/* Clear Command Register */
 	LPC_CAN2->CMR = 0x0;
@@ -642,11 +648,8 @@ static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN2->TDA1 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN2->TDB1 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDA1 |= (data[i] << (i*8));
+			LPC_CAN2->TDB1 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -678,11 +681,8 @@ static void CAN2_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN2->TDA2 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN2->TDB2 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDA2 |= (data[i] << (i*8));
+			LPC_CAN2->TDB2 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -714,11 +714,8 @@ static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 		uint8_t i;
 		for(i = 0; i < dlc && i < 4; i++)
 		{
-			LPC_CAN2->TDA3 |= (data[i] << i*8);
-		}
-		for(i = 4; i < dlc; i++)
-		{
-			LPC_CAN2->TDB3 |= (data[i] << (i - 4)*8);
+			LPC_CAN2->TDA3 |= (data[i] << (i*8));
+			LPC_CAN2->TDB3 |= (data[i + 4] << (i*8));
 		}
 	}
 	
@@ -738,7 +735,7 @@ int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	/* Check from GSR if errors are present */
 	uint32_t is_err;
 	
-	is_err	= LPC_CAN2->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
+	is_err	= LPC_CAN2->GSR & (0xFFFF0080);
 	if(is_err)
 	{
 		return -CAN_ERR_BUS;
@@ -777,7 +774,7 @@ int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
-	uint32_t is_err = LPC_CAN2->GSR & ((0x1 << 7) | (0xff << 16) | (0xff << 24));
+	uint32_t is_err = LPC_CAN2->GSR & (0xFFFF0080);
 	if(is_err)
 	{
 		return -CAN_ERR_BUS;
@@ -798,11 +795,8 @@ int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 		uint8_t i;
 		for(i = 0; i < *dlc && i < 4; i++)
 		{
-			 data[i] = (uint8_t)(LPC_CAN2->RDA << i*8);
-		}
-		for(i = 4; i < *dlc; i++)
-		{
-			data[i] = (uint8_t)(LPC_CAN2->RDB << (i - 4)*8);
+			 data[i] = (uint8_t)(LPC_CAN2->RDA << (i * 8));
+			 data[i + 4] = (uint8_t)(LPC_CAN2->RDB << (i * 8));
 		}
 	}
 	
@@ -827,7 +821,7 @@ void CAN2_DeInit(void)
 	LPC_PINCON->PINSEL4 &= ~((0xFF << 14) | (0xFF << 16));
 	LPC_PINCON->PINMODE0 &= ~((0xFF << 14) | (0xFF << 16));
 }
-int CAN2_AFAdd_StdID(const uint16_t id)
+int CAN2_AF_Add_StdID(const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -847,7 +841,7 @@ int CAN2_AFAdd_StdID(const uint16_t id)
 			}
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 			return CAN_OK;
 		}
@@ -859,7 +853,7 @@ int CAN2_AFAdd_StdID(const uint16_t id)
 			}
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -873,7 +867,6 @@ int CAN2_AFAdd_StdID(const uint16_t id)
 		if((i * 4) != LPC_CANAF->EFF_sa)
 		{
 			uint16_t j;
-			uint32_t temp0, temp1;
 			for(j = LPC_CANAF->EFF_sa / 4 + 1; j > i; j--)
 			{
 				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
@@ -900,14 +893,14 @@ int CAN2_AFAdd_StdID(const uint16_t id)
 		LPC_CANAF->ENDofTable = LPC_CANAF->EFF_sa;
 		
 		/* Set AF in Normal Mode */
-		LPC_CANAF->AFMR |= ~(0x1 << 1);
+		LPC_CANAF->AFMR &= ~(0x1 << 1);
 		
 		return CAN_OK;
 	}	
 	
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 	
@@ -930,7 +923,7 @@ int CAN2_AF_Remove_StdID(const uint16_t id)
 			mask |= 0xFFFF;
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -939,14 +932,14 @@ int CAN2_AF_Remove_StdID(const uint16_t id)
 			mask |= 0xFFFF0000;
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 }
@@ -968,7 +961,7 @@ int CAN2_AF_Enable_StdID(const uint16_t id)
 			mask |= (0x1 << 12);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -977,14 +970,14 @@ int CAN2_AF_Enable_StdID(const uint16_t id)
 			mask |= (0x1 << 28);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 
 	return - CAN_ERR_AF;
 }
@@ -1006,7 +999,7 @@ int CAN2_AF_Disable_StdID(const uint16_t id)
 			mask |= ~(0x1 << 12);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
@@ -1015,14 +1008,14 @@ int CAN2_AF_Disable_StdID(const uint16_t id)
 			mask |= ~(0x1 << 28);
 			
 			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR |= ~(0x1 << 1);
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
 			return CAN_OK;
 		}
 	}
 	
 	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR |= ~(0x1 << 1);
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
 	return -CAN_ERR_AF;
 }	
