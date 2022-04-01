@@ -52,6 +52,12 @@ extern uint32_t SystemFrequency;
 #define TIE2	(0x1 << 9)		/* Transmit Buffer 2 */
 #define TIE3	(0x1 << 10)		/* Transmit Buffer 3 */
 
+/* Acceptance Filter Definitions */
+#define STDID		0x1
+#define STDID_grp	0x2
+#define EXTID		0x3
+#define EXTID_grp	0x4
+
 /* Function prototypes -------------------------------------------------------*/
 
 uint32_t Clk_Can(uint32_t PCLK_CAN);
@@ -61,22 +67,21 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN1_EnableIRQ(uint16_t reg, uint32_t priority);
 void CAN1_DeInit(void);
-void CAN1_AF_Enable(void);
-void CAN1_AF_Disable(void);
-int CAN1_AF_Add_StdID(const uint16_t id);
-int CAN1_AF_Remove_StdID(const uint16_t id);
-int CAN1_AF_Enable_StdID(const uint16_t id);
-int CAN1_AF_Disable_StdID(const uint16_t id);
 
 int CAN2_Init(const uint32_t baudrate, const uint8_t loopback);
 int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN2_EnableIRQ(uint16_t reg, uint32_t priority);
 void CAN2_DeInit(void);
-int CAN2_AF_Add_StdID(const uint16_t id);
-int CAN2_AF_Remove_StdID(const uint16_t id);
-int CAN2_AF_Enable_StdID(const uint16_t id);
-int CAN2_AF_Disable_StdID(const uint16_t id);
+
+void CAN_AF_On(void);
+void CAN_AF_Off(void);
+
+int CAF_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+int CAN_AF_Enable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+int CAN_AF_Disable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+
 
 void CAN_IRQHandler(void);
 #endif /* end __CAN_H__ */

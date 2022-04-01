@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-	* @author  Nicola di Gruttola Giardino 
+  * @author  Nicola di Gruttola Giardino 
   * @file    can.c
   * @brief   This file provides code for the configuration
   *          of the CAN instances.
@@ -31,7 +31,6 @@ uint32_t Clk_Can(uint32_t PCLK_CAN)
 	else 
 		return (SystemFrequency / 6);
 }
-
 
 /*---------------------------------------------------------------------------
 **                         Functions for CAN1
@@ -123,8 +122,6 @@ int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
  	
 	return CAN_OK;
 }
-
-
 
 static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
@@ -316,222 +313,6 @@ void CAN1_DeInit(void)
 	LPC_PINCON->PINSEL0 &= ~(0xFF | (0xFF << 2));
 	LPC_PINCON->PINMODE0 &= ~(0xFF | (0xFF << 2));
 }
-
-void CAN1_AF_Enable(void)
-{
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR &= ~0x1;
-}
-
-void CAN1_AF_Disable(void)
-{
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR |= 0x1;
-}
-
-int CAN1_AF_Add_StdID(const uint16_t id)
-{
-	uint16_t i;
-	uint32_t mask;
-	
-	static uint8_t flag = 0;
-	
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR |= (0x1 << 1);
-	
-	/* Search if already existing and enable */
-	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
-	{
-		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
-		{
-			if(mask & (0x1 << 12))
-			{
-				mask &= ~(0x1 << 12);
-			}
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-	
-			return CAN_OK;
-		}
-		else if((mask & 0x7FF0000) == id)
-		{
-			if(mask & (0x1 << 28))
-			{
-				mask &= ~(0x1 << 28);
-			}
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-	}
-	
-	/* If the table can be filled */
-	if(LPC_CANAF->ENDofTable / 4 != 512)
-	{
-		i = LPC_CANAF->SFF_GRP_sa / 4;
-		
-		if((i * 4) != LPC_CANAF->EFF_sa)
-		{
-			uint16_t j;
-			for(j = LPC_CANAF->EFF_sa / 4 + 1; j > i; j--)
-			{
-				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
-			}
-			
-		}
-		
-		/* Write in the first available entry */
-		if(!flag)
-		{
-			LPC_CANAF_RAM->mask[i] = 0xFFFF0000;
-			LPC_CANAF_RAM->mask[i] |= (0x7FF & id);
-			flag = 1;
-			/* Increase the starting address */
-			LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
-			LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
-			LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_sa;
-			LPC_CANAF->ENDofTable = LPC_CANAF->EFF_sa;
-		}
-		else
-		{
-			LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF0000);
-			LPC_CANAF_RAM->mask[i - 1] |= ((0x7FF & id) << 16);
-			flag = 0;
-		}
-		
-		/* Set AF in Normal Mode */
-		LPC_CANAF->AFMR &= ~(0x1 << 1);
-		
-		return CAN_OK;
-	}	
-	
-	
-	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR &= ~(0x1 << 1);
-	
-	return -CAN_ERR_AF;
-	
-}
-
-int CAN1_AF_Remove_StdID(const uint16_t id)
-{
-	uint16_t i;
-	uint32_t mask;
-	
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR |= (0x1 << 1);
-	
-	/* Search if existing and remove by setting all bits to 1 */
-	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
-	{
-		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
-		{
-			LPC_CANAF_RAM->mask[i] |= 0xFFFF;
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-		else if((mask & 0x7FF0000) == id)
-		{
-			LPC_CANAF_RAM->mask[i] |= 0xFFFF0000;
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-	}
-	
-	/* ToDo: Shift back all entries */
-	
-	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR &= ~(0x1 << 1);
-	
-	return -CAN_ERR_AF;
-}
-
-int CAN1_AF_Enable_StdID(const uint16_t id)
-{
-	uint16_t i;
-	uint32_t mask;
-	
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR |= (0x1 << 1);
-	
-	/* Search if exists and enable by setting appropriate bit to 1 */
-	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
-	{
-		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
-		{
-			mask |= (0x1 << 12);
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-		else if((mask & 0x7FF0000) == id)
-		{
-			mask |= (0x1 << 28);
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-	}
-	
-	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR &= ~(0x1 << 1);
-
-	return - CAN_ERR_AF;
-}
-
-int CAN1_AF_Disable_StdID(const uint16_t id)
-{
-	uint16_t i;
-	uint32_t mask;
-	
-	/* Set AF in Bypass Mode */
-	LPC_CANAF->AFMR |= (0x1 << 1);
-	
-	/* Search if exists and disable by setting appropriate bit to 0 */
-	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
-	{
-		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
-		{
-			mask |= ~(0x1 << 12);
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-		else if((mask & 0x7FF0000) == id)
-		{
-			mask |= ~(0x1 << 28);
-			
-			/* Set AF in Normal Mode */
-			LPC_CANAF->AFMR &= ~(0x1 << 1);
-			
-			return CAN_OK;
-		}
-	}
-	
-	/* Set AF in Normal Mode */
-	LPC_CANAF->AFMR &= ~(0x1 << 1);
-	
-	return -CAN_ERR_AF;
-}	
 
 /*---------------------------------------------------------------------------
 **                         End functions for CAN1
@@ -821,10 +602,47 @@ void CAN2_DeInit(void)
 	LPC_PINCON->PINSEL4 &= ~((0xFF << 14) | (0xFF << 16));
 	LPC_PINCON->PINMODE0 &= ~((0xFF << 14) | (0xFF << 16));
 }
-int CAN2_AF_Add_StdID(const uint16_t id)
+/*---------------------------------------------------------------------------
+**                         End functions for CAN2
+**---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+**                         Init functions for AF
+**---------------------------------------------------------------------------*/
+
+/* Prototypes of static functions */
+/* Functions for Standard ID */
+static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id);
+static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id);
+static int CAN_AF_Enable_StdID(const uint8_t controller, const uint16_t id);
+static int CAN_AF_Disable_StdID(const uint8_t controller, const uint16_t id);
+
+/* Functions for Groups of Standard ID */
+static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+static int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+static int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+
+/* Functions */
+/* ToDos for tomorrow: add the controller number check, do the extended identifier */
+void CAN_AF_On(void)
+{
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR &= ~0x1;
+}
+
+void CAN_AF_Off(void)
+{
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= 0x1;
+}
+
+static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
+	
+	static uint8_t flag = 0;
 	
 	/* Set AF in Bypass Mode */
 	LPC_CANAF->AFMR |= (0x1 << 1);
@@ -835,7 +653,7 @@ int CAN2_AF_Add_StdID(const uint16_t id)
 		mask = LPC_CANAF_RAM->mask[i];
 		if((mask & 0x7FF) == id)
 		{
-			if(mask & (0x2 << 12))
+			if(mask & (0x1 << 12))
 			{
 				mask &= ~(0x1 << 12);
 			}
@@ -847,7 +665,7 @@ int CAN2_AF_Add_StdID(const uint16_t id)
 		}
 		else if((mask & 0x7FF0000) == id)
 		{
-			if(mask & (0x2 << 28))
+			if(mask & (0x1 << 28))
 			{
 				mask &= ~(0x1 << 28);
 			}
@@ -862,7 +680,7 @@ int CAN2_AF_Add_StdID(const uint16_t id)
 	/* If the table can be filled */
 	if(LPC_CANAF->ENDofTable / 4 != 512)
 	{
-		i = LPC_CANAF->SFF_GRP_sa / 4 - 1;
+		i = LPC_CANAF->SFF_GRP_sa / 4;
 		
 		if((i * 4) != LPC_CANAF->EFF_sa)
 		{
@@ -875,22 +693,23 @@ int CAN2_AF_Add_StdID(const uint16_t id)
 		}
 		
 		/* Write in the first available entry */
-		if(LPC_CANAF_RAM->mask[i] & 0xffff)
+		if(!flag)
 		{
-			LPC_CANAF_RAM->mask[i] &= ~(0xFFFF);
-			LPC_CANAF_RAM->mask[i] |= ((0x1 << 13) | (0x7FF & id));
+			LPC_CANAF_RAM->mask[i] = 0xFFFF0000;
+			LPC_CANAF_RAM->mask[i] |= (0x7FF & id);
+			flag = 1;
+			/* Increase the starting address */
+			LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
+			LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
+			LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa + 4;
+			LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 4;
 		}
-		else if(LPC_CANAF_RAM->mask[i] & 0xffff0000)
+		else
 		{
-			LPC_CANAF_RAM->mask[i] &= ~(0xFFFF0000);
-			LPC_CANAF_RAM->mask[i] |= (((0x1 << 13) | (0x7FF & id)) << 16);
+			LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF0000);
+			LPC_CANAF_RAM->mask[i - 1] |= ((0x7FF & id) << 16);
+			flag = 0;
 		}
-		
-		/* Increase the starting address */
-		LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
-		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
-		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_sa;
-		LPC_CANAF->ENDofTable = LPC_CANAF->EFF_sa;
 		
 		/* Set AF in Normal Mode */
 		LPC_CANAF->AFMR &= ~(0x1 << 1);
@@ -906,7 +725,7 @@ int CAN2_AF_Add_StdID(const uint16_t id)
 	
 }
 
-int CAN2_AF_Remove_StdID(const uint16_t id)
+static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -918,33 +737,53 @@ int CAN2_AF_Remove_StdID(const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id && (mask & (0x1 << 13)))
+		if((mask & 0x7FF) == id)
 		{
-			mask |= 0xFFFF;
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF;
 			
 			/* Set AF in Normal Mode */
 			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
-			return CAN_OK;
+			break;			
 		}
-		else if(((mask & 0x7FF0000) == id) && (mask & (0x1 << 29)))
+		else if((mask & 0x7FF0000) == id)
 		{
-			mask |= 0xFFFF0000;
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF0000;
 			
 			/* Set AF in Normal Mode */
 			LPC_CANAF->AFMR &= ~(0x1 << 1);
 			
-			return CAN_OK;
+			break;
 		}
+	}
+	
+	if(i == LPC_CANAF->SFF_GRP_sa / 4)
+	{
+		return -CAN_ERR_AF;
+	}
+	
+	if(LPC_CANAF_RAM->mask[i] == 0xFFFFFFFF)
+	{
+		/* Copy the IDs */
+		for(i = i + 1; i < LPC_CANAF->ENDofTable / 4; i++)
+		{
+			LPC_CANAF_RAM->mask[i - 1] = LPC_CANAF_RAM->mask[i];
+		}
+		
+		/* Decrease the starting address */
+		LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa - 4;
+		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa - 4;
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa - 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable - 4;
 	}
 	
 	/* Set AF in Normal Mode */
 	LPC_CANAF->AFMR &= ~(0x1 << 1);
 	
-	return -CAN_ERR_AF;
+	return CAN_OK;
 }
 
-int CAN2_AF_Enable_StdID(const uint16_t id)
+static int CAN_AF_Enable_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -956,7 +795,7 @@ int CAN2_AF_Enable_StdID(const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == id) && (mask & (0x1 << 13)))
+		if((mask & 0x7FF) == id)
 		{
 			mask |= (0x1 << 12);
 			
@@ -965,7 +804,7 @@ int CAN2_AF_Enable_StdID(const uint16_t id)
 			
 			return CAN_OK;
 		}
-		else if(((mask & 0x7FF0000) == id) && (mask & (0x1 << 29)))
+		else if((mask & 0x7FF0000) == id)
 		{
 			mask |= (0x1 << 28);
 			
@@ -982,7 +821,7 @@ int CAN2_AF_Enable_StdID(const uint16_t id)
 	return - CAN_ERR_AF;
 }
 
-int CAN2_AF_Disable_StdID(const uint16_t id)
+static int CAN_AF_Disable_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -994,7 +833,7 @@ int CAN2_AF_Disable_StdID(const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == id) && (mask & (0x1 << 13)))
+		if((mask & 0x7FF) == id)
 		{
 			mask |= ~(0x1 << 12);
 			
@@ -1003,7 +842,7 @@ int CAN2_AF_Disable_StdID(const uint16_t id)
 			
 			return CAN_OK;
 		}
-		else if(((mask & 0x7FF0000) == id) && (mask & (0x1 << 29)))
+		else if((mask & 0x7FF0000) == id)
 		{
 			mask |= ~(0x1 << 28);
 			
@@ -1021,8 +860,234 @@ int CAN2_AF_Disable_StdID(const uint16_t id)
 }	
 
 
+int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= (0x1 << 1);
+	
+	/* Search if already existing and enable */
+	for(i = LPC_CANAF->SFF_GRP_sa / 4; i < LPC_CANAF->EFF_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		{
+			if(mask & (0x1 << 12))
+			{
+				mask &= ~(0x1 << 12);
+			}
+			
+			if(mask & (0x1 << 28))
+			{
+				mask &= ~(0x1 << 28);
+			}
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
+			
+			return CAN_OK;
+		}
+	}
+	
+	/* If the table can be filled */
+	if(LPC_CANAF->ENDofTable / 4 != 512)
+	{
+		i = LPC_CANAF->EFF_sa / 4;
+		
+		if((i * 4) != LPC_CANAF->EFF_GRP_sa)
+		{
+			uint16_t j;
+			for(j = LPC_CANAF->EFF_GRP_sa / 4 + 1; j > i; j--)
+			{
+				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
+			}
+			
+		}
+		
+		/* Write in the first available entry */
+		LPC_CANAF_RAM->mask[i] = 0x00000000;
+		LPC_CANAF_RAM->mask[i] |= (0x7FF & startId);
+		LPC_CANAF_RAM->mask[i] |= ((0x7FF & endId) << 16);
+		
+		/* Increase the starting address */
+		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa + 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 4;
+		
+		/* Set AF in Normal Mode */
+		LPC_CANAF->AFMR &= ~(0x1 << 1);
+		
+		return CAN_OK;
+	}	
+	
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
+	
+	return -CAN_ERR_AF;
+}
+
+int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= (0x1 << 1);
+	
+	/* Search if existing and remove by setting all bits to 1 */
+	for(i = LPC_CANAF->SFF_GRP_sa / 4; i < LPC_CANAF->EFF_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		{
+			LPC_CANAF_RAM->mask[i] = 0xFFFFFFFF;
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
+			
+			break;			
+		}
+	}
+	
+	if(i == LPC_CANAF->EFF_sa / 4)
+	{
+		return -CAN_ERR_AF;
+	}
+	
+	if(LPC_CANAF_RAM->mask[i] == 0xFFFFFFFF)
+	{
+		/* Copy the IDs */
+		for(i = i + 1; i < LPC_CANAF->ENDofTable / 4; i++)
+		{
+			LPC_CANAF_RAM->mask[i - 1] = LPC_CANAF_RAM->mask[i];
+		}
+		
+		/* Decrease the starting address */
+		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa - 4;
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa - 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable - 4;
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
+	
+	return CAN_OK;
+}	
+
+int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= (0x1 << 1);
+	
+	/* Search if exists and enable by setting appropriate bit to 1 */
+	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		{
+			mask |= (0x1 << 12);
+			mask |= (0x1 << 28);
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
+			
+			return CAN_OK;
+		}
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
+
+	return - CAN_ERR_AF;
+}
+
+int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF in Bypass Mode */
+	LPC_CANAF->AFMR |= (0x1 << 1);
+	
+	/* Search if exists and disable by setting appropriate bit to 0 */
+	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		{ 
+			mask |= ~(0x1 << 12);
+			mask |= ~(0x1 << 28);
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
+			
+			return CAN_OK;
+		}
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1 << 1);
+	
+	return -CAN_ERR_AF;
+}
+
+int CAF_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
+{
+	switch(type)
+	{
+		case STDID:
+			return CAN_AF_Add_StdID(startId);
+		case STDID_grp:
+			return CAN_AF_Add_StdIDGroup(startId, EndId);
+		default:
+			return -CAN_ERR_AF;
+	}
+	
+}
+int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
+{
+	switch(type)
+	{
+		case STDID:
+			return CAN_AF_Remove_StdID(startId);
+		case STDID_grp:
+			return CAN_AF_Remove_StdIDGroup(startId, EndId);
+		default:
+			return -CAN_ERR_AF;
+	}
+}
+int CAN_AF_Enable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
+{
+	switch(type)
+	{
+		case STDID:
+			return CAN_AF_Enable_StdID(startId);
+		case STDID_grp:
+			return CAN_AF_Enable_StdIDGroup(startId, EndId);
+		default:
+			return -CAN_ERR_AF;
+	}
+}
+int CAN_AF_Disable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
+{
+	switch(type)
+	{
+		case STDID:
+			return CAN_AF_Disable_StdID(startId);
+		case STDID_grp:
+			return CAN_AF_Disable_StdIDGroup(startId, EndId);
+		default:
+			return -CAN_ERR_AF;
+	}
+}
 /*---------------------------------------------------------------------------
-**                         End functions for CAN2
+**                         End functions for AF
 **---------------------------------------------------------------------------*/
 
 /*****************************************************************************
