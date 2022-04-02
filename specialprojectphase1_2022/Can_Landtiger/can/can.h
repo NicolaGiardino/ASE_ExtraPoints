@@ -53,6 +53,9 @@ extern uint32_t SystemFrequency;
 #define TIE3	(0x1 << 10)		/* Transmit Buffer 3 */
 
 /* Acceptance Filter Definitions */
+#define	CAN1_AF		0x0
+#define CAN2_AF		0x1
+
 #define STDID		0x1
 #define STDID_grp	0x2
 #define EXTID		0x3

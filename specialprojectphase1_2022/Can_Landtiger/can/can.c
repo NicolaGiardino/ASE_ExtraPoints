@@ -624,7 +624,6 @@ static int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t sta
 static int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
 
 /* Functions */
-/* ToDos for tomorrow: add the controller number check, do the extended identifier */
 void CAN_AF_On(void)
 {
 	/* Set AF in Bypass Mode */
@@ -651,7 +650,7 @@ static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
+		if(((mask & 0x7FF) == id) && ((mask & 0xE000) == ((0xF & controller) << 13)))
 		{
 			if(mask & (0x1 << 12))
 			{
@@ -663,7 +662,7 @@ static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 	
 			return CAN_OK;
 		}
-		else if((mask & 0x7FF0000) == id)
+		else if(((mask & 0x7FF0000) == id) && ((mask & 0xE0000000) == ((0xF & controller) << 29)))
 		{
 			if(mask & (0x1 << 28))
 			{
@@ -696,7 +695,7 @@ static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 		if(!flag)
 		{
 			LPC_CANAF_RAM->mask[i] = 0xFFFF0000;
-			LPC_CANAF_RAM->mask[i] |= (0x7FF & id);
+			LPC_CANAF_RAM->mask[i] |= ((0x7FF & id) | ((0xF & controller) << 13));
 			flag = 1;
 			/* Increase the starting address */
 			LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
@@ -707,7 +706,7 @@ static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 		else
 		{
 			LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF0000);
-			LPC_CANAF_RAM->mask[i - 1] |= ((0x7FF & id) << 16);
+			LPC_CANAF_RAM->mask[i - 1] |= (((0x7FF & id) << 16) | ((0xF & controller) << 29));
 			flag = 0;
 		}
 		
@@ -737,7 +736,7 @@ static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
+		if(((mask & 0x7FF) == id) && ((mask & 0xE000) == ((0xF & controller) << 13)))
 		{
 			LPC_CANAF_RAM->mask[i] |= 0xFFFF;
 			
@@ -746,7 +745,7 @@ static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id)
 			
 			break;			
 		}
-		else if((mask & 0x7FF0000) == id)
+		else if(((mask & 0x7FF0000) == id ) && ((mask & 0xE0000000) == ((0xF & controller) << 29)))
 		{
 			LPC_CANAF_RAM->mask[i] |= 0xFFFF0000;
 			
@@ -795,7 +794,7 @@ static int CAN_AF_Enable_StdID(const uint8_t controller, const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
+		if(((mask & 0x7FF) == id) && ((mask & 0xE000) == ((0xF & controller) << 13)))
 		{
 			mask |= (0x1 << 12);
 			
@@ -804,7 +803,7 @@ static int CAN_AF_Enable_StdID(const uint8_t controller, const uint16_t id)
 			
 			return CAN_OK;
 		}
-		else if((mask & 0x7FF0000) == id)
+		else if(((mask & 0x7FF0000) == id) && ((mask & 0xE0000000) == ((0xF &controller) << 29)))
 		{
 			mask |= (0x1 << 28);
 			
@@ -833,7 +832,7 @@ static int CAN_AF_Disable_StdID(const uint8_t controller, const uint16_t id)
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if((mask & 0x7FF) == id)
+		if(((mask & 0x7FF) == id) && ((mask & 0xE000) == ((0xF & controller) << 13)))
 		{
 			mask |= ~(0x1 << 12);
 			
@@ -842,7 +841,7 @@ static int CAN_AF_Disable_StdID(const uint8_t controller, const uint16_t id)
 			
 			return CAN_OK;
 		}
-		else if((mask & 0x7FF0000) == id)
+		else if(((mask & 0x7FF0000) == id) && ((mask & 0xE0000000) == ((0xF & controller) << 29)))
 		{
 			mask |= ~(0x1 << 28);
 			
@@ -860,7 +859,7 @@ static int CAN_AF_Disable_StdID(const uint8_t controller, const uint16_t id)
 }	
 
 
-int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -872,7 +871,7 @@ int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, cons
 	for(i = LPC_CANAF->SFF_GRP_sa / 4; i < LPC_CANAF->EFF_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId) && ((mask & 0xE000) == ((0xF & controller) << 13)) && ((mask & 0xE0000000) == ((0xF & controller) << 29)))
 		{
 			if(mask & (0x1 << 12))
 			{
@@ -929,7 +928,7 @@ int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, cons
 	return -CAN_ERR_AF;
 }
 
-int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -941,7 +940,7 @@ int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, c
 	for(i = LPC_CANAF->SFF_GRP_sa / 4; i < LPC_CANAF->EFF_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		if((((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId)) && ((mask & 0xE000) == ((0xF & controller) << 13)) && ((mask & 0xE0000000) == ((0xF & controller) << 29)))
 		{
 			LPC_CANAF_RAM->mask[i] = 0xFFFFFFFF;
 			
@@ -977,7 +976,7 @@ int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, c
 	return CAN_OK;
 }	
 
-int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+static int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -989,7 +988,7 @@ int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, c
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		if((((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId)) && ((mask & 0xE000) == ((0xF &controller) << 13)) && ((mask & 0xE0000000) == ((0xF &controller) << 29)))
 		{
 			mask |= (0x1 << 12);
 			mask |= (0x1 << 28);
@@ -1007,7 +1006,7 @@ int CAN_AF_Enable_StdIDGroup(const uint8_t controller, const uint16_t startId, c
 	return - CAN_ERR_AF;
 }
 
-int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
+static int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i;
 	uint32_t mask;
@@ -1019,7 +1018,7 @@ int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, 
 	for(i = 0; i < LPC_CANAF->SFF_GRP_sa / 4; i++)
 	{
 		mask = LPC_CANAF_RAM->mask[i];
-		if(((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId))
+		if((((mask & 0x7FF) == startId) && ((mask & 0x7FF0000) == endId)) && ((mask & 0xE000) == ((0xF &controller) << 13)) && ((mask & 0xE0000000) == ((0xF &controller) << 29)))
 		{ 
 			mask |= ~(0x1 << 12);
 			mask |= ~(0x1 << 28);
@@ -1039,12 +1038,17 @@ int CAN_AF_Disable_StdIDGroup(const uint8_t controller, const uint16_t startId, 
 
 int CAF_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
+	if(controller > CAN2_AF)
+	{
+		return -CAN_ERR_AF;
+	}
+	
 	switch(type)
 	{
 		case STDID:
-			return CAN_AF_Add_StdID(startId);
+			return CAN_AF_Add_StdID(controller, startId);
 		case STDID_grp:
-			return CAN_AF_Add_StdIDGroup(startId, EndId);
+			return CAN_AF_Add_StdIDGroup(controller, startId, EndId);
 		default:
 			return -CAN_ERR_AF;
 	}
@@ -1052,24 +1056,34 @@ int CAF_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, c
 }
 int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
+	if(controller > CAN2_AF)
+	{
+		return -CAN_ERR_AF;
+	}
+	
 	switch(type)
 	{
 		case STDID:
-			return CAN_AF_Remove_StdID(startId);
+			return CAN_AF_Remove_StdID(controller, startId);
 		case STDID_grp:
-			return CAN_AF_Remove_StdIDGroup(startId, EndId);
+			return CAN_AF_Remove_StdIDGroup(controller, startId, EndId);
 		default:
 			return -CAN_ERR_AF;
 	}
 }
 int CAN_AF_Enable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
+	if(controller > CAN2_AF)
+	{
+		return -CAN_ERR_AF;
+	}
+	
 	switch(type)
 	{
 		case STDID:
-			return CAN_AF_Enable_StdID(startId);
+			return CAN_AF_Enable_StdID(controller, startId);
 		case STDID_grp:
-			return CAN_AF_Enable_StdIDGroup(startId, EndId);
+			return CAN_AF_Enable_StdIDGroup(controller, startId, EndId);
 		default:
 			return -CAN_ERR_AF;
 	}
