@@ -72,13 +72,13 @@ int play;
 
 int blink_mask = 0xFF;
 
-extern int check;
+//extern int check;
 
 void TIMER0_IRQHandler (void)
 {
 	static int ticks=0;
 	/* DAC management */	
-	LPC_DAC->DACR = (SinTable[ticks]/3)<<6;
+	//LPC_DAC->DACR = (SinTable[ticks]/3)<<6;
 	ticks++;
 	if(ticks==45) ticks=0;
 	
@@ -150,7 +150,7 @@ void TIMER2_IRQHandler (void)
 void TIMER3_IRQHandler (void)
 {
 	
-	check=2;
+	//check=2;
 	GUI_Text(10, 280, ">> something went wrong <<", White, Red);
 	GUI_Text(10, 300, ">>  reset to try again  <<", White, Red);
 	song=2;

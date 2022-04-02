@@ -30,7 +30,7 @@ int down_KEY1=0;
 int down_KEY2=0;
 
 extern int blink_mask;
-extern int check;
+//extern int check;
 
 void RIT_IRQHandler (void)
 {						
@@ -99,7 +99,7 @@ void RIT_IRQHandler (void)
 		}
 	}	
 
-	if(check==2 && flag==0){
+	if(/*check==2 &&*/ flag==0){
 		/* joystick management */
 		if((LPC_GPIO1->FIOPIN & (1<<25)) == 0){	/* Joytick Select pressed */
 			if((blink_mask & (1<<7))!=0){
@@ -185,8 +185,8 @@ void RIT_IRQHandler (void)
 			disable_timer(3);
 	}
 	/* ADC management */
-	if(check!=2)
-		ADC_start_conversion();		
+	/*if(check!=2)
+		ADC_start_conversion();	*/	
 			
   LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
 }

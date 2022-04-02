@@ -79,12 +79,8 @@ void CAN2_DeInit(void);
 
 void CAN_AF_On(void);
 void CAN_AF_Off(void);
-
-int CAF_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
 int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
-int CAN_AF_Enable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
-int CAN_AF_Disable(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
-
 
 void CAN_IRQHandler(void);
 #endif /* end __CAN_H__ */

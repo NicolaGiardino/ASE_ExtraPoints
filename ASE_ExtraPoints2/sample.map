@@ -888,25 +888,25 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-        32          6       1520          0          0       1507   asciilib.o
+        32          6       1520          0          0       1527   asciilib.o
          0          0          0          0          0      16896   funct_led.o
-      2388        146          0         28          0      31437   functs.o
-     16612        104          0          1          0      40179   glcd.o
-       656         46          0         18          0       1544   irq_adc.o
-       196         28          0          0          0       1013   irq_button.o
-       860        120          0         28          0       1607   irq_rit.o
-        92         18          0         96          0       1345   irq_timer.o
-       108         18          0          0          0        764   lib_adc.o
-       212         22          0          0          0        954   lib_button.o
-        64         14          0          1          0        794   lib_led.o
-       148         14          0          0          0      27487   lib_rit.o
-       224         12          0          0          0       1624   lib_timer.o
-       200         44          0          0          0      49806   sample.o
-        56         22        204          0        512       1068   startup_lpc17xx.o
-       588         36          0          5          0        965   system_lpc17xx.o
+      2388        146          0         28          0      31449   functs.o
+     16612        104          0          1          0      40199   glcd.o
+       656         46          0         18          0       1556   irq_adc.o
+       196         28          0          0          0       1017   irq_button.o
+       860        120          0         28          0       1615   irq_rit.o
+        92         18          0         96          0       1361   irq_timer.o
+       108         18          0          0          0        768   lib_adc.o
+       212         22          0          0          0        962   lib_button.o
+        64         14          0          1          0        802   lib_led.o
+       148         14          0          0          0      27491   lib_rit.o
+       224         12          0          0          0       1632   lib_timer.o
+       200         44          0          0          0      49814   sample.o
+        56         22        204          0        512       1080   startup_lpc17xx.o
+       588         36          0          5          0        977   system_lpc17xx.o
 
     ----------------------------------------------------------------------
-     22436        650       1772        184        512     178990   Object Totals
+     22436        650       1772        184        512     179146   Object Totals
          0          0         48          0          0          0   (incl. Generated)
          0          0          0          7          0          0   (incl. Padding)
 
@@ -966,8 +966,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     23460        694       1772        184        608     178878   Grand Totals
-     23460        694       1772        184        608     178878   ELF Image Totals
+     23460        694       1772        184        608     179034   Grand Totals
+     23460        694       1772        184        608     179034   ELF Image Totals
      23460        694       1772        184          0          0   ROM Totals
 
 ==============================================================================

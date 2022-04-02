@@ -58,7 +58,7 @@ int main (void)
 	 * so as not to have it at a higher piority than the buttons 
 	 */
 	NVIC_SetPriority(ADC_IRQn, 1);
-	init_RIT(0x004C4B40);									/* RIT Initialization 50 msec       	*/
+	init_RIT(0x002625A0);									/* RIT Initialization 50 msec       	*/
 	enable_RIT();													/* RIT enabled												*/
 	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/

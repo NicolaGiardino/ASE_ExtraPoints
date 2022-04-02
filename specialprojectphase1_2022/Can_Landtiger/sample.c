@@ -59,14 +59,34 @@ int main (void)
 	//LPC_PINCON->PINSEL1 |= (1<<21);
 	//LPC_PINCON->PINSEL1 &= ~(1<<20);
 	//LPC_GPIO0->FIODIR |= (1<<26);
-	i = CAN1_Init(125000, 0);
+	i = CAN1_Init(250000, 0);
 	
 	GUI_Text(0, 0, "Can send text", White, Blue);
 	
 	if(i)
 	{
 		GUI_Text(0, 20, "Error while sending", White, Blue);
+		while(1)
+		;
 	}
+#if RCV
+	i = CAN_AF_Add(0, STDID, 0x01, NULL);
+	if(i)
+	{
+		GUI_Text(0, 20, "Error while setting AF", White, Blue);
+		while(1)
+		;
+	}
+	i = CAN_AF_Add(0, STDID_grp, 0x02, 0x04);
+	if(i)
+	{
+		GUI_Text(0, 20, "Error while setting AF", White, Blue);
+		while(1)
+		;
+	}
+	
+	CAN_AF_On();
+#endif
 	
 	data[0] = 0x1c;
 	data[1] = 0x2d;
@@ -84,17 +104,43 @@ int main (void)
 #if RCV
 		CAN1_Receive(&id, &rtr, &dlc, data);
 		GUI_Text((j + 20) % 500, 0, "Received", White, Blue);
+		if(id == 1)
+		{
+			GUI_Text((j + 20) % 500, 50, "1", White, Blue);
+		}
+		if(id == 2)
+		{
+			GUI_Text((j + 20) % 500, 100, "2", White, Blue);
+		}
+		if(id == 3)
+		{
+			GUI_Text((j + 20) % 500, 150, "3", White, Blue);
+		}
+		if(id == 4)
+		{
+			GUI_Text((j + 20) % 500, 200, "4", White, Blue);
+		}
 #else
 		CAN1_Transmit(1, 0x01, 0, 1, data);
-		for(i = 0; i < 1000; i++)
+		for(i = 0; i < 10000; i++)
 		{
 			__asm__("NOP");
 		}
 		CAN1_Transmit(2, 0x02, 0, 8, data);
-		GUI_Text((j + 20) % 500, 0, "Sent", White, Blue);
+		for(i = 0; i < 10000; i++)
+		{
+			__asm__("NOP");
+		}
+		CAN1_Transmit(3, 0x03, 0, 5, data);
+		for(i = 0; i < 10000; i++)
+		{
+			__asm__("NOP");
+		}
+		CAN1_Transmit(1, 0x04, 0, 2, data);
+		GUI_Text((j + 20) % 1000, 0, "Sent", White, Blue);
 #endif
 		j++;
-		for(i = 0; i < 1000; i++)
+		for(i = 0; i < 10000; i++)
 		{
 			__asm__("NOP");
 		}

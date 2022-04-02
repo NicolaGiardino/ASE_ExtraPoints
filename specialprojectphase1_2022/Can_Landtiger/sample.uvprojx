@@ -546,26 +546,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>adc</GroupName>
-          <Files>
-            <File>
-              <FileName>adc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\adc\adc.h</FilePath>
-            </File>
-            <File>
-              <FileName>IRQ_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\adc\IRQ_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>lib_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\adc\lib_adc.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>can</GroupName>
           <Files>
             <File>

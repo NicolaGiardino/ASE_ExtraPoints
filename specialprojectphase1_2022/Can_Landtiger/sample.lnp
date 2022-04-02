@@ -15,8 +15,6 @@
 ".\irq_rit.o"
 ".\lib_rit.o"
 ".\touchpanel.o"
-".\irq_adc.o"
-".\lib_adc.o"
 ".\can.o"
 ".\irq_can.o"
 --strict --scatter ".\sample.sct"
