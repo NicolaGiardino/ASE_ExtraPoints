@@ -31,8 +31,8 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 #define RCV 1
 
 int i, j;
-uint8_t data[8], rtr, dlc;
-uint16_t id;
+uint8_t data[8], rtr, dlc, ff;
+uint32_t id;
 /*----------------------------------------------------------------------------
   Main Program
  *----------------------------------------------------------------------------*/
@@ -102,7 +102,7 @@ int main (void)
 	while (1) 
 	{ 
 #if RCV
-		CAN1_Receive(&id, &rtr, &dlc, data);
+		CAN1_Receive(&id, &ff, &rtr, &dlc, data);
 		GUI_Text((j + 20) % 500, 0, "Received", White, Blue);
 		if(id == 1)
 		{
@@ -121,22 +121,22 @@ int main (void)
 			GUI_Text((j + 20) % 500, 200, "4", White, Blue);
 		}
 #else
-		CAN1_Transmit(1, 0x01, 0, 1, data);
+		CAN1_Transmit(1, 0, 0x01, 0, 1, data);
 		for(i = 0; i < 10000; i++)
 		{
 			__asm__("NOP");
 		}
-		CAN1_Transmit(2, 0x02, 0, 8, data);
+		CAN1_Transmit(2, 0, 0x02, 0, 8, data);
 		for(i = 0; i < 10000; i++)
 		{
 			__asm__("NOP");
 		}
-		CAN1_Transmit(3, 0x03, 0, 5, data);
+		CAN1_Transmit(3, 0, 0x03, 0, 5, data);
 		for(i = 0; i < 10000; i++)
 		{
 			__asm__("NOP");
 		}
-		CAN1_Transmit(1, 0x04, 0, 2, data);
+		CAN1_Transmit(1, 0, 0x04, 0, 2, data);
 		GUI_Text((j + 20) % 1000, 0, "Sent", White, Blue);
 #endif
 		j++;

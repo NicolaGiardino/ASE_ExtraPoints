@@ -37,9 +37,9 @@ uint32_t Clk_Can(uint32_t PCLK_CAN)
 **---------------------------------------------------------------------------*/
 
 /* Prototypes of static functions -------------------------------------------*/
-static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
-static void CAN1_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
-static void CAN1_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN1_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN1_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN1_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 
 /* Functions ----------------------------------------------------------------*/
 int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
@@ -125,16 +125,50 @@ int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
 	return CAN_OK;
 }
 
-static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+int CAN1_SetPrio(const uint8_t stb, const uint8_t prio)
 {
-	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
-	 * 2 and 3 for a later implementation,	
-	 * only DLC, RTR are set and FF is set to standard
-	 */
+	/* Enable priority based on priority of each STB */
+	switch(stb)
+	{
+		case 1:
+			LPC_CAN1->TFI1 |= prio;
+			break;
+		case 2:
+			LPC_CAN1->TFI2 |= prio;
+			break;
+		case 3:
+			LPC_CAN1->TFI3 |= prio;
+			break;
+		default:
+			return -CAN_ERR_STB;
+	}
+	
+	LPC_CAN1->MOD |= (0x1 << 3);
+	
+	return CAN_OK;
+}
+void CAN1_DisablePrio(void)
+{
+	/* Set priority based on CAN ID */
+	LPC_CAN1->MOD &= ~(0x1 << 3);
+}
+
+static void CAN1_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+{
+	
 	LPC_CAN1->TFI1 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN1->TID1 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN1->TID1 = (0x1FFFFFFF & id);
+		LPC_CAN1->TFI1 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN1->TID1 = (0x7FF & id);
+		LPC_CAN1->TFI1 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -160,16 +194,21 @@ static void CAN1_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-static void CAN1_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+static void CAN1_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
-	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
-	 * 2 and 3 for a later implementation,	
-	 * only DLC, RTR are set and FF is set to standard
-	 */
 	LPC_CAN1->TFI2 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN1->TID2 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN1->TID2 = (0x1FFFFFFF & id);
+		LPC_CAN1->TFI2 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN1->TID2 = (0x7FF & id);
+		LPC_CAN1->TFI2 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -195,16 +234,21 @@ static void CAN1_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-static void CAN1_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+static void CAN1_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
-	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
-	 * 2 and 3 for a later implementation,	
-	 * only DLC, RTR are set and FF is set to standard
-	 */
 	LPC_CAN1->TFI3 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN1->TID3 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN1->TID3 = (0x1FFFFFFF & id);
+		LPC_CAN1->TFI3 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN1->TID3 = (0x7FF & id);
+		LPC_CAN1->TFI3 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -230,7 +274,7 @@ static void CAN1_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+int CAN1_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Check from GSR if errors are present */
 	uint32_t is_err;
@@ -251,13 +295,13 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	switch(stb)
 	{
 		case 1:
-			CAN1_Transmit_STB1(id, rtr, dlc, data);
+			CAN1_Transmit_STB1(id, ff, rtr, dlc, data);
 			break;
 		case 2:
-			CAN1_Transmit_STB2(id, rtr, dlc, data);
+			CAN1_Transmit_STB2(id, ff, rtr, dlc, data);
 			break;
 		case 3:
-			CAN1_Transmit_STB3(id, rtr, dlc, data);
+			CAN1_Transmit_STB3(id, ff, rtr, dlc, data);
 			break;
 		default:
 			return -CAN_ERR_STB;
@@ -271,7 +315,7 @@ int CAN1_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	
 }
 
-int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
+int CAN1_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
 	uint32_t is_err = LPC_CAN1->GSR & (0xFFFF0080);
@@ -285,7 +329,8 @@ int CAN1_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 		;
 	
 	/* Set id, rtr and data lenght */
-	*id = LPC_CAN1->RID & 0x7FF;
+	*ff = (LPC_CAN1->RFS >> 31) & 0x1;
+	*id = *ff ? LPC_CAN1->RID & 0x1FFFFFFF : LPC_CAN1->RID & 0x7FF;
 	*rtr = (LPC_CAN1->RFS >> 30) & 0x1;
 	*dlc = (LPC_CAN1->RFS >> 16) & 0xF;
 	
@@ -331,9 +376,9 @@ void CAN1_DeInit(void)
 **---------------------------------------------------------------------------*/
 
 /* Prototypes of static functions -------------------------------------------*/
-static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
-static void CAN2_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
-static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN2_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN2_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
+static void CAN2_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 
 /* Functions ----------------------------------------------------------------*/
 int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
@@ -419,9 +464,35 @@ int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
 	return CAN_OK;
 }
 
+int CAN2_SetPrio(const uint8_t stb, const uint8_t prio)
+{
+	/* Enable priority based on priority of each STB */
+	switch(stb)
+	{
+		case 1:
+			LPC_CAN2->TFI1 |= prio;
+			break;
+		case 2:
+			LPC_CAN2->TFI2 |= prio;
+			break;
+		case 3:
+			LPC_CAN2->TFI3 |= prio;
+			break;
+		default:
+			return -CAN_ERR_STB;
+	}
+	
+	LPC_CAN2->MOD |= (0x1 << 3);
+	
+	return CAN_OK;
+}
 
-
-static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+void CAN2_DisablePrio(void)
+{
+	/* Set priority based on CAN ID */
+	LPC_CAN2->MOD &= ~(0x1 << 3);
+}
+static void CAN2_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
 	 * 2 and 3 for a later implementation,	
@@ -429,8 +500,17 @@ static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 	 */
 	LPC_CAN2->TFI1 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN2->TID1 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN2->TID1 = (0x1FFFFFFF & id);
+		LPC_CAN2->TFI1 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN2->TID1 = (0x7FF & id);
+		LPC_CAN2->TFI1 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -456,16 +536,22 @@ static void CAN2_Transmit_STB1(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-static void CAN2_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+static void CAN2_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
-	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
-	 * 2 and 3 for a later implementation,	
-	 * only DLC, RTR are set and FF is set to standard
-	 */
+	
 	LPC_CAN2->TFI2 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN2->TID2 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN2->TID2 = (0x1FFFFFFF & id);
+		LPC_CAN2->TFI2 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN2->TID2 = (0x7FF & id);
+		LPC_CAN2->TFI2 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -491,7 +577,7 @@ static void CAN2_Transmit_STB2(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+static void CAN2_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
 	 * 2 and 3 for a later implementation,	
@@ -499,8 +585,17 @@ static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 	 */
 	LPC_CAN2->TFI3 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
 	
-	/* Set id */
-	LPC_CAN2->TID3 = (0x03FF & id);
+	/* Set id, if ff Extended, else */
+	if(ff)
+	{
+		LPC_CAN2->TID2 = (0x1FFFFFFF & id);
+		LPC_CAN2->TFI2 |= (0x80000000);
+	}
+	else
+	{
+		LPC_CAN2->TID2 = (0x7FF & id);
+		LPC_CAN2->TFI2 &= ~(0x80000000);
+	}
 	
 	/* If not RTR, set the data to be sent */
 	if(!rtr)
@@ -526,7 +621,7 @@ static void CAN2_Transmit_STB3(const uint16_t id, const uint8_t rtr, const uint8
 	}
 }
 
-int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
+int CAN2_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Check from GSR if errors are present */
 	uint32_t is_err;
@@ -547,13 +642,13 @@ int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	switch(stb)
 	{
 		case 1:
-			CAN2_Transmit_STB1(id, rtr, dlc, data);
+			CAN2_Transmit_STB1(id, ff, rtr, dlc, data);
 			break;
 		case 2:
-			CAN2_Transmit_STB2(id, rtr, dlc, data);
+			CAN2_Transmit_STB2(id, ff, rtr, dlc, data);
 			break;
 		case 3:
-			CAN2_Transmit_STB3(id, rtr, dlc, data);
+			CAN2_Transmit_STB3(id, ff, rtr, dlc, data);
 			break;
 		default:
 			return -CAN_ERR_STB;
@@ -567,7 +662,7 @@ int CAN2_Transmit(const uint8_t stb, const uint16_t id, const uint8_t rtr, const
 	
 }
 
-int CAN2_Receive(uint16_t *id, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
+int CAN2_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
 	uint32_t is_err = LPC_CAN2->GSR & (0xFFFF0080);
@@ -628,11 +723,15 @@ void CAN2_DeInit(void)
 /* Prototypes of static functions -------------------------------------------*/
 /* Functions for Standard ID */
 static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id); /* LOOK: For StdID it is necessary that all entries are in ascending order */
-static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id); /* For StdID_grp they are rearranged automatically */
+static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id);
 
 /* Functions for Groups of Standard ID */
-static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId); /* For StdID_grp they are rearranged automatically */
 static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId);
+
+/* Functions for Extended ID */
+static int CAN_AF_Add_ExtID(const uint8_t controller, const uint32_t id);/* For ExtID they are rearranged automatically */
+static int CAN_AF_Remove_ExtID(const uint8_t controller, const uint32_t id);
 
 /* Functions ----------------------------------------------------------------*/
 void CAN_AF_On(void)
@@ -783,7 +882,7 @@ static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startI
 	{
 		i = LPC_CANAF->EFF_sa / 4;
 		
-		if((i * 4) != LPC_CANAF->EFF_GRP_sa)
+		if((i * 4) != LPC_CANAF->ENDofTable)
 		{
 			for(j = LPC_CANAF->ENDofTable / 4; j > i; j--)
 			{
@@ -892,6 +991,121 @@ static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t sta
 	return CAN_OK;
 }	
 
+static int CAN_AF_Add_ExtID(const uint8_t controller, const uint32_t id)
+{
+	uint16_t i, j;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= (0x1);
+	
+	/* If the table can be filled */
+	if(LPC_CANAF->ENDofTable / 4 != 512)
+	{
+		i = LPC_CANAF->EFF_GRP_sa / 4;
+		
+		if((i * 4) != LPC_CANAF->ENDofTable)
+		{
+			for(j = LPC_CANAF->ENDofTable / 4; j > i; j--)
+			{
+				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
+			}
+			
+		}
+	
+		/* Look for higher addresses, to rearrange in an ascending order */
+		for(j = LPC_CANAF->EFF_sa / 4; j < i; j++) 
+		{
+			if(id < (LPC_CANAF_RAM->mask[j] & 0x1FFFFFFF))
+			{
+				uint32_t k;
+				
+				for(k = i; k > j; k--)
+				{
+					LPC_CANAF_RAM->mask[k] = LPC_CANAF_RAM->mask[k - 1];
+				}
+				
+				LPC_CANAF_RAM->mask[j] = 0x00000000;
+				LPC_CANAF_RAM->mask[j] |= (0x1FFFFFFF & id) | ((0x7 & controller) << 29);
+				
+				/* Increase the starting address */
+				LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa + 4;
+				LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 4;
+				
+				/* Set AF in Normal Mode */
+				LPC_CANAF->AFMR &= ~(0x1);
+				
+				return CAN_OK;
+			}
+			
+		}
+		
+		/* Write in the first available entry */
+		LPC_CANAF_RAM->mask[i] = 0x00000000;
+		LPC_CANAF_RAM->mask[i] |= ((0x1FFFFFFF & id) | ((0x7 & controller) << 29));
+		
+		/* Increase the starting address */
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa + 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 4;
+		
+		/* Set AF in Normal Mode */
+		LPC_CANAF->AFMR &= ~(0x1);
+		
+		return CAN_OK;
+	}	
+	
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return -CAN_ERR_AF;
+}
+static int CAN_AF_Remove_ExtID(const uint8_t controller, const uint32_t id)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= (0x1);
+	
+	/* Search if existing and remove by setting all bits to 1 */
+	for(i = LPC_CANAF->EFF_sa / 4; i < LPC_CANAF->EFF_GRP_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x1FFFFFFF) == id) && ((mask & 0xE0000000) == ((0x7 & controller) << 29)))
+		{
+			LPC_CANAF_RAM->mask[i] = 0xFFFFFFFF;
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1 << 1);
+			
+			break;			
+		}
+	}
+	
+	if(i == LPC_CANAF->EFF_sa / 4)
+	{
+		return -CAN_ERR_AF;
+	}
+	
+	if(LPC_CANAF_RAM->mask[i] == 0xFFFFFFFF)
+	{
+		/* Copy the IDs */
+		for(i = i + 1; i < LPC_CANAF->ENDofTable / 4; i++)
+		{
+			LPC_CANAF_RAM->mask[i - 1] = LPC_CANAF_RAM->mask[i];
+		}
+		
+		/* Decrease the starting address */
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa - 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable - 4;
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return CAN_OK;
+}
+
 int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
 	if(controller > CAN2_AF)
@@ -905,6 +1119,10 @@ int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, c
 			return CAN_AF_Add_StdID(controller, startId);
 		case STDID_grp:
 			return CAN_AF_Add_StdIDGroup(controller, startId, endId);
+		case EXTID: 
+			return CAN_AF_Add_ExtID(controller, startId);
+		case EXTID_grp:
+			return -CAN_ERR_AF;
 		default:
 			return -CAN_ERR_AF;
 	}
@@ -923,6 +1141,10 @@ int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId
 			return CAN_AF_Remove_StdID(controller, startId);
 		case STDID_grp:
 			return CAN_AF_Remove_StdIDGroup(controller, startId, endId);
+		case EXTID: 
+			return CAN_AF_Remove_ExtID(controller, startId);
+		case EXTID_grp:
+			return -CAN_ERR_AF;
 		default:
 			return -CAN_ERR_AF;
 	}
