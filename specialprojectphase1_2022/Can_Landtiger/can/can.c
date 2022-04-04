@@ -20,6 +20,14 @@
 
 static uint8_t loopback_can1, loopback_can2;
 
+/**
+ * This function returns the clock
+ * supplied to the CAN
+ *
+ * @param PCLK_CAN divider selection
+ *
+ * @return uint32_t supplied clock
+ */
 uint32_t Clk_Can(uint32_t PCLK_CAN) 
 { 			
 	if(PCLK_CAN == 0) 
@@ -42,6 +50,14 @@ static void CAN1_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_
 static void CAN1_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 
 /* Functions ----------------------------------------------------------------*/
+/**
+ * This function initiates the CAN1 peripheral
+ *
+ * @param baudrate speed of the CAN periph
+ * @param loopback to decide if the periph is in loopback or not
+ *
+ * @return int error code or okay
+ */
 int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
 {
 	uint32_t brp, pclk_can, result;
@@ -125,6 +141,16 @@ int CAN1_Init(const uint32_t baudrate, const uint8_t loopback)
 	return CAN_OK;
 }
 
+/**
+ * This function is used to set the priority
+ * of each transmit buffer, overrides priority
+ * based on ID
+ *
+ * @param stb number of buffer to which the priority shall be set
+ * @param prio priority of the stb
+ *
+ * @return int error code or okay
+ */
 int CAN1_SetPrio(const uint8_t stb, const uint8_t prio)
 {
 	/* Enable priority based on priority of each STB */
@@ -147,12 +173,31 @@ int CAN1_SetPrio(const uint8_t stb, const uint8_t prio)
 	
 	return CAN_OK;
 }
+/**
+ * This function is used to use the priority of the ID
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN1_DisablePrio(void)
 {
 	/* Set priority based on CAN ID */
 	LPC_CAN1->MOD &= ~(0x1 << 3);
 }
 
+/**
+ * This function is used to transmit the message
+ * using the 1st buffer of CAN1 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN1_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	
@@ -194,6 +239,18 @@ static void CAN1_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using the 2nd buffer of CAN1 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN1_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	LPC_CAN1->TFI2 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
@@ -234,6 +291,18 @@ static void CAN1_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using the 3rd buffer of CAN1 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN1_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	LPC_CAN1->TFI3 = (0x00 | ((0x0F & dlc) << 16) | ((0x01 & rtr) << 30) | (0x0 << 31));
@@ -274,6 +343,19 @@ static void CAN1_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using one of the three buffers
+ *
+ * @param stb transmitter buffer to be used
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return int error code or okay
+ */
 int CAN1_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Check from GSR if errors are present */
@@ -315,6 +397,17 @@ int CAN1_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const 
 	
 }
 
+/**
+ * This function is used to receive a message
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes received, number equal to dlc
+ *
+ * @return int error code or okay
+ */
 int CAN1_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
@@ -352,6 +445,14 @@ int CAN1_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t 
 	
 }
 
+/**
+ * This function is used to activate the Interrupts for CAN1
+ *
+ * @param reg interrupts to activate
+ * @param priority of the interrupt in NVIC
+ *
+ * @return void
+ */
 void CAN1_EnableIRQ(uint16_t reg, uint32_t priority)
 {
 	LPC_CAN1->IER = reg & 0x7FF;
@@ -360,6 +461,13 @@ void CAN1_EnableIRQ(uint16_t reg, uint32_t priority)
 	NVIC_SetPriority(CAN_IRQn, priority);	   /* priority, the lower the better     */
 }
 
+/**
+ * This function is used to deactivate CAN1
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN1_DeInit(void)
 {
 	/* Reset PINSEL and PINMODE */
@@ -381,6 +489,14 @@ static void CAN2_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_
 static void CAN2_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 
 /* Functions ----------------------------------------------------------------*/
+/**
+ * This function initiates the CAN2 peripheral
+ *
+ * @param baudrate speed of the CAN periph
+ * @param loopback to decide if the periph is in loopback or not
+ *
+ * @return int error code or okay
+ */
 int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
 {
 	uint32_t brp, pclk_can, result;
@@ -464,6 +580,16 @@ int CAN2_Init(const uint32_t baudrate, const uint8_t loopback)
 	return CAN_OK;
 }
 
+/**
+ * This function is used to set the priority
+ * of each transmit buffer, overrides priority
+ * based on ID
+ *
+ * @param stb number of buffer to which the priority shall be set
+ * @param prio priority of the stb
+ *
+ * @return int error code or okay
+ */
 int CAN2_SetPrio(const uint8_t stb, const uint8_t prio)
 {
 	/* Enable priority based on priority of each STB */
@@ -487,11 +613,30 @@ int CAN2_SetPrio(const uint8_t stb, const uint8_t prio)
 	return CAN_OK;
 }
 
+/**
+ * This function is used to use the priority of the ID
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN2_DisablePrio(void)
 {
 	/* Set priority based on CAN ID */
 	LPC_CAN2->MOD &= ~(0x1 << 3);
 }
+/**
+ * This function is used to transmit the message
+ * using the 1st buffer of CAN2 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN2_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
@@ -536,6 +681,18 @@ static void CAN2_Transmit_STB1(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using the 2nd buffer of CAN2 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN2_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	
@@ -577,6 +734,18 @@ static void CAN2_Transmit_STB2(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using the 3rd buffer of CAN2 peripheral
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return void
+ */
 static void CAN2_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Set PRIO not used in this DEMO, only Transmit Buffer 1 used,
@@ -621,6 +790,19 @@ static void CAN2_Transmit_STB3(const uint32_t id, const uint8_t ff, const uint8_
 	}
 }
 
+/**
+ * This function is used to transmit the message
+ * using one of the three buffers
+ *
+ * @param stb transmitter buffer to be used
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes to transfer, number equal to dlc
+ *
+ * @return int error code or okay
+ */
 int CAN2_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data)
 {
 	/* Check from GSR if errors are present */
@@ -662,6 +844,17 @@ int CAN2_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const 
 	
 }
 
+/**
+ * This function is used to receive a message
+ *
+ * @param id identifier of the message
+ * @param ff set to 1 if extended id, 0 for standard
+ * @param rtr 1 for request for transmission, 0 for data
+ * @param dlc data lenght of this message if rtr is zero, or of the data to send if rtr
+ * @param *data bytes received, number equal to dlc
+ *
+ * @return int error code or okay
+ */
 int CAN2_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data)
 {
 	/* Check from GSR if errors are present */
@@ -698,6 +891,14 @@ int CAN2_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t 
 	
 }
 
+/**
+ * This function is used to activate the Interrupts for CAN2
+ *
+ * @param reg interrupts to activate
+ * @param priority of the interrupt in NVIC
+ *
+ * @return void
+ */
 void CAN2_EnableIRQ(uint16_t reg, uint32_t priority)
 {
 	LPC_CAN2->IER = reg & 0x7FF;
@@ -706,6 +907,13 @@ void CAN2_EnableIRQ(uint16_t reg, uint32_t priority)
 	NVIC_SetPriority(CAN_IRQn, priority);	   /* priority, the lower the better     */
 }
 
+/**
+ * This function is used to deactivate CAN2
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN2_DeInit(void)
 {
 	/* Reset PINSEL and PINMODE */
@@ -722,7 +930,7 @@ void CAN2_DeInit(void)
 
 /* Prototypes of static functions -------------------------------------------*/
 /* Functions for Standard ID */
-static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id); /* LOOK: For StdID it is necessary that all entries are in ascending order */
+static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id);
 static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id);
 
 /* Functions for Groups of Standard ID */
@@ -734,18 +942,44 @@ static int CAN_AF_Add_ExtID(const uint8_t controller, const uint32_t id);/* For 
 static int CAN_AF_Remove_ExtID(const uint8_t controller, const uint32_t id);
 
 /* Functions ----------------------------------------------------------------*/
+/**
+ * This function is used to activate
+ * the Acceptance Filter
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN_AF_On(void)
 {
 	/* Set AF On */
 	LPC_CANAF->AFMR &= ~0x3;
 }
 
+/**
+ * This function is used to bypass the 
+ * Acceptance Filter
+ *
+ * @param void
+ *
+ * @return void
+ */
 void CAN_AF_Off(void)
 {
 	/* Set AF off and bypass */
 	LPC_CANAF->AFMR |= 0x3;
 }
 
+/**
+ * This function is used to add
+ * Standard IDs to the AF
+ * For StdID it is necessary that all entries are in ascending order
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to add to the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
@@ -812,6 +1046,15 @@ static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id)
 	
 }
 
+/**
+ * This function is used to remove
+ * Standard IDs to from AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to remove from the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id)
 {
 	uint16_t i;
@@ -870,6 +1113,18 @@ static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id)
 	return CAN_OK;
 }
 
+/**
+ * This function is used to add intervals of
+ * Standard IDs to the AF
+ * For StdID it is necessary that all entries are in ascending order
+ * For these it is already done in software (Not needed from User code)
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param startId lower bound of identifier interval to add to the AF
+ * @param endId upper bound of identifier interval to add to the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i, j;
@@ -943,6 +1198,16 @@ static int CAN_AF_Add_StdIDGroup(const uint8_t controller, const uint16_t startI
 	return -CAN_ERR_AF;
 }
 
+/**
+ * This function is used to remove intervals of
+ * Standard IDs from the AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param startId lower bound of identifier interval to remove from the AF
+ * @param endId upper bound of identifier interval to remove from the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t startId, const uint16_t endId)
 {
 	uint16_t i;
@@ -991,6 +1256,17 @@ static int CAN_AF_Remove_StdIDGroup(const uint8_t controller, const uint16_t sta
 	return CAN_OK;
 }	
 
+/**
+ * This function is used to add 
+ * Extended IDs to the AF
+ * For ExtIDs it is necessary that all entries are in ascending order
+ * For these it is already done in software (Not needed from User code)
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to add to the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Add_ExtID(const uint8_t controller, const uint32_t id)
 {
 	uint16_t i, j;
@@ -1059,6 +1335,15 @@ static int CAN_AF_Add_ExtID(const uint8_t controller, const uint32_t id)
 	
 	return -CAN_ERR_AF;
 }
+/**
+ * This function is used to remove
+ * Extended IDs from the AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to remove from the AF
+ *
+ * @return int error code or okay
+ */
 static int CAN_AF_Remove_ExtID(const uint8_t controller, const uint32_t id)
 {
 	uint16_t i;
@@ -1106,6 +1391,155 @@ static int CAN_AF_Remove_ExtID(const uint8_t controller, const uint32_t id)
 	return CAN_OK;
 }
 
+/**
+ * This function is used to add intervals of
+ * Extended IDs to the AF
+ * For ExtIDs it is necessary that all entries are in ascending order
+ * For these it is already done in software (Not needed from User code)
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param startId lower bound of identifier interval to add to the AF
+ * @param endId upper bound of identifier interval to add to the AF
+ *
+ * @return int error code or okay
+ */
+static int CAN_AF_Add_ExtIDGroup(const uint8_t controller, const uint32_t startId, const uint32_t endId)
+{
+	uint16_t i, j;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= (0x1);
+	
+	/* If the table can be filled */
+	if(LPC_CANAF->ENDofTable / 4 != 512)
+	{
+	
+		i = LPC_CANAF->ENDofTable;
+		
+		/* Look for higher addresses, to rearrange in an ascending order */
+		for(j = LPC_CANAF->EFF_GRP_sa / 4; j < i; j += 2) 
+		{
+			if(startId < (LPC_CANAF_RAM->mask[j] & 0x1FFFFFFF))
+			{
+				uint32_t k;
+				
+				for(k = i; k > j; k--)
+				{
+					LPC_CANAF_RAM->mask[k] = LPC_CANAF_RAM->mask[k - 1];
+				}
+				
+				LPC_CANAF_RAM->mask[j] = 0x00000000;
+				LPC_CANAF_RAM->mask[j] |= (0x1FFFFFFF & startId) | ((0x7 & controller) << 29);
+				
+				LPC_CANAF_RAM->mask[j + 1] = 0x00000000;
+				LPC_CANAF_RAM->mask[j + 1] |= (0x1FFFFFFF & endId) | ((0x7 & controller) << 29);
+				
+				/* Increase the starting address */
+				LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 8;
+				
+				/* Set AF in Normal Mode */
+				LPC_CANAF->AFMR &= ~(0x1);
+				
+				return CAN_OK;
+			}
+			
+		}
+		
+		LPC_CANAF_RAM->mask[i] = 0x00000000;
+		LPC_CANAF_RAM->mask[i] |= (0x1FFFFFFF & startId) | ((0x7 & controller) << 29);
+		
+		LPC_CANAF_RAM->mask[i + 1] = 0x00000000;
+		LPC_CANAF_RAM->mask[i + 1] |= (0x1FFFFFFF & endId) | ((0x7 & controller) << 29);
+		
+		/* Increase the starting address */
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 8;
+		
+		/* Set AF in Normal Mode */
+		LPC_CANAF->AFMR &= ~(0x1);
+		
+		return CAN_OK;
+	}	
+	
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return -CAN_ERR_AF;
+}
+
+/**
+ * This function is used to remove groups of
+ * Extended IDs from the AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param startId lower bound of identifier interval to remove from the AF
+ * @param endId upper bound of identifier interval to remove from the AF
+ *
+ * @return int error code or okay
+ */
+static int CAN_AF_Remove_ExtIDGroup(const uint8_t controller, const uint32_t startId, const uint32_t endId)
+{
+	uint16_t i;
+	uint32_t mask1, mask2;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= (0x1);
+	
+	/* Search if existing and remove by setting all bits to 1 */
+	for(i = LPC_CANAF->EFF_GRP_sa / 4; i < LPC_CANAF->ENDofTable / 4; i += 2)
+	{
+		mask1 = LPC_CANAF_RAM->mask[i];
+		mask2 = LPC_CANAF_RAM->mask[i + 1];
+		
+		if(((mask1 & 0x1FFFFFFF) == startId) && ((mask1 & 0xE0000000) == ((0x7 & controller) << 29)))
+		{
+			if(((mask2 & 0x1FFFFFFF) == endId) && ((mask2 & 0xE0000000) == ((0x7 & controller) << 29)))
+			{
+				LPC_CANAF_RAM->mask[i] = 0xFFFFFFFF;
+				LPC_CANAF_RAM->mask[i + 1] = 0xFFFFFFFF;
+				
+				/* Set AF in Normal Mode */
+				LPC_CANAF->AFMR &= ~(0x1 << 1);
+				
+				break;	
+			}				
+		}
+	}
+	
+	if(i == LPC_CANAF->ENDofTable / 4)
+	{
+		return -CAN_ERR_AF;
+	}
+	
+	if(LPC_CANAF_RAM->mask[i] == 0xFFFFFFFF)
+	{
+		/* Copy the IDs */
+		for(i = i + 1; i < LPC_CANAF->ENDofTable / 4; i++)
+		{
+			LPC_CANAF_RAM->mask[i - 1] = LPC_CANAF_RAM->mask[i];
+		}
+		
+		/* Decrease the starting address */
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable - 8;
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return CAN_OK;
+}
+
+/**
+ * This function is used to add entries to the AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param type used to choose which kind of ID needs to be added
+ * @param startId lower bound of identifier interval to add to the AF (if in groups)
+ * 			or unique ID if in single ID
+ * @param endId upper bound of identifier interval to add to the AF (NULL if in single ID)
+ *
+ * @return int error code or okay
+ */
 int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
 	if(controller > CAN2_AF)
@@ -1116,18 +1550,29 @@ int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, c
 	switch(type)
 	{
 		case STDID:
-			return CAN_AF_Add_StdID(controller, startId);
+			return CAN_AF_Add_StdID(controller, (uint16_t)startId);
 		case STDID_grp:
-			return CAN_AF_Add_StdIDGroup(controller, startId, endId);
+			return CAN_AF_Add_StdIDGroup(controller, (uint16_t)startId, (uint16_t)endId);
 		case EXTID: 
 			return CAN_AF_Add_ExtID(controller, startId);
 		case EXTID_grp:
-			return -CAN_ERR_AF;
+			return CAN_AF_Add_ExtIDGroup(controller, startId, endId);
 		default:
 			return -CAN_ERR_AF;
 	}
 	
 }
+/**
+ * This function is used to remove entries from the AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param type used to choose which kind of ID needs to be removed
+ * @param startId lower bound of identifier interval to remove from the AF (if in groups)
+ * 			or unique ID if in single ID
+ * @param endId upper bound of identifier interval to remove from the AF (NULL if in single ID)
+ *
+ * @return int error code or okay
+ */
 int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId)
 {
 	if(controller > CAN2_AF)
@@ -1138,13 +1583,13 @@ int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId
 	switch(type)
 	{
 		case STDID:
-			return CAN_AF_Remove_StdID(controller, startId);
+			return CAN_AF_Remove_StdID(controller, (uint16_t)startId);
 		case STDID_grp:
-			return CAN_AF_Remove_StdIDGroup(controller, startId, endId);
+			return CAN_AF_Remove_StdIDGroup(controller, (uint16_t)startId, (uint16_t)endId);
 		case EXTID: 
 			return CAN_AF_Remove_ExtID(controller, startId);
 		case EXTID_grp:
-			return -CAN_ERR_AF;
+			return CAN_AF_Remove_ExtIDGroup(controller, startId, endId);
 		default:
 			return -CAN_ERR_AF;
 	}
