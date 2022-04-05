@@ -56,6 +56,7 @@ extern uint32_t SystemFrequency;
 #define	CAN1_AF		0x0
 #define CAN2_AF		0x1
 
+#define FullCAN		0x0
 #define STDID		0x1
 #define STDID_grp	0x2
 #define EXTID		0x3
@@ -71,6 +72,7 @@ void CAN1_DisablePrio(void);
 int  CAN1_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 int  CAN1_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN1_EnableIRQ(uint16_t reg, uint32_t priority);
+void CAN1_Reset_Errors(void);
 void CAN1_DeInit(void);
 
 int  CAN2_Init(const uint32_t baudrate, const uint8_t loopback);
@@ -79,12 +81,16 @@ void CAN1_DisablePrio(void);
 int  CAN2_Transmit(const uint8_t stb, const uint32_t id, const uint8_t ff, const uint8_t rtr, const uint8_t dlc, const uint8_t *data);
 int  CAN2_Receive(uint32_t *id, uint8_t *ff, uint8_t *rtr, uint8_t *dlc, uint8_t *data);
 void CAN2_EnableIRQ(uint16_t reg, uint32_t priority);
+void CAN2_Reset_Errors(void);
 void CAN2_DeInit(void);
 
 void CAN_AF_On(void);
 void CAN_AF_Off(void);
 int  CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
 int  CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId, const uint32_t endId);
+
+void FullCAN_On(void);
+void FullCAN_Off(void);
 
 void CAN_IRQHandler(void);
 #endif /* end __CAN_H__ */

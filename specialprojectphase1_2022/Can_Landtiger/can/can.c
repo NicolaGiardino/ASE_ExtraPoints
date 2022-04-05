@@ -462,6 +462,25 @@ void CAN1_EnableIRQ(uint16_t reg, uint32_t priority)
 }
 
 /**
+ * This function is used to reset the Error Counters of CAN1
+ *
+ * @param void
+ *
+ * @return void
+ */
+void CAN1_Reset_Errors(void)
+{
+	/* Enter reset mode */
+	LPC_CAN1->MOD |= 0x1;
+	
+	/* Reset TxErr and RxErr Counters */
+	LPC_CAN1->GSR &= ~(0xFFFF0000);
+	
+	/* Exit reset mode */
+	LPC_CAN1->MOD &= ~0x1;
+}
+
+/**
  * This function is used to deactivate CAN1
  *
  * @param void
@@ -908,6 +927,25 @@ void CAN2_EnableIRQ(uint16_t reg, uint32_t priority)
 }
 
 /**
+ * This function is used to reset the Error Counters of CAN2
+ *
+ * @param void
+ *
+ * @return void
+ */
+void CAN2_Reset_Errors(void)
+{
+	/* Enter reset mode */
+	LPC_CAN2->MOD |= 0x1;
+	
+	/* Reset TxErr and RxErr Counters */
+	LPC_CAN2->GSR &= ~(0xFFFF0000);
+	
+	/* Exit reset mode */
+	LPC_CAN2->MOD &= ~0x1;
+}
+
+/**
  * This function is used to deactivate CAN2
  *
  * @param void
@@ -929,6 +967,11 @@ void CAN2_DeInit(void)
 **---------------------------------------------------------------------------*/
 
 /* Prototypes of static functions -------------------------------------------*/
+
+/* Functions for FULLCAN AF ID */
+static int FULLCAN_AF_Add(const uint8_t controller, const uint16_t id);
+static int FULLCAN_AF_Remove(const uint8_t controller, const uint16_t id);
+
 /* Functions for Standard ID */
 static int CAN_AF_Add_StdID(const uint8_t controller, const uint16_t id);
 static int CAN_AF_Remove_StdID(const uint8_t controller, const uint16_t id);
@@ -968,6 +1011,151 @@ void CAN_AF_Off(void)
 {
 	/* Set AF off and bypass */
 	LPC_CANAF->AFMR |= 0x3;
+}
+
+
+/**
+ * This function is used to add
+ * FULLCAN IDs to the AF
+ * For FULLCAN it is necessary that all entries are in ascending order
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to add to the AF
+ *
+ * @return int error code or okay
+ */
+static int FULLCAN_AF_Add(const uint8_t controller, const uint16_t id)
+{
+	uint16_t i;
+	
+	static uint8_t flag = 0;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= 0x1;
+	
+	/* If the table can be filled */
+	if(LPC_CANAF->ENDofTable / 4 != 512)
+	{
+		i = LPC_CANAF->SFF_sa / 4;
+		
+		if((i * 4) != LPC_CANAF->ENDofTable)
+		{
+			uint16_t j;
+			for(j = LPC_CANAF->ENDofTable / 4 + 1; j > i; j--)
+			{
+				LPC_CANAF_RAM->mask[j] = LPC_CANAF_RAM->mask[j - 1];
+			}
+			
+		}
+		
+		/* Write in the first available entry */
+		if(flag)
+		{	
+			/* Must be in ascending order, otherwise won't work */
+			if(id < ((LPC_CANAF_RAM->mask[i - 1] & 0x7FF0000) >> 16))
+			{
+				LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF);
+				LPC_CANAF_RAM->mask[i - 1] = (LPC_CANAF_RAM->mask[i - 1] >> 16) | (((0x7FF & id) << 16) | ((0x7 & controller) << 29));
+			}
+			else
+			{
+				LPC_CANAF_RAM->mask[i - 1] &= ~(0xFFFF);
+				LPC_CANAF_RAM->mask[i - 1] |= ((0x7FF & id) | ((0x7 & controller) << 13));
+			}
+			flag = 0;
+		}
+		else
+		{
+			LPC_CANAF_RAM->mask[i] = 0xFFFF | (((0x7FF & id) << 16) | ((0x7 & controller) << 29));
+			flag = 1;
+			
+			/* Increase the starting address */
+			LPC_CANAF->SFF_sa = LPC_CANAF->SFF_sa + 4;
+			LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa + 4;
+			LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa + 4;
+			LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa + 4;
+			LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable + 4;
+		}
+		
+		/* Set AF On */
+		LPC_CANAF->AFMR &= ~(0x1);
+		
+		return CAN_OK;
+	}	
+	
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return -CAN_ERR_AF;
+}
+
+/**
+ * This function is used to remove
+ * FULLCAN IDs to from AF
+ *
+ * @param controller to choose between CAN1 or 2
+ * @param id identifier to remove from the AF
+ *
+ * @return int error code or okay
+ */
+static int FULLCAN_AF_Remove(const uint8_t controller, const uint16_t id)
+{
+	uint16_t i;
+	uint32_t mask;
+	
+	/* Set AF to Discard all */
+	LPC_CANAF->AFMR |= (0x1);
+	
+	/* Search if existing and remove by setting all bits to 1 */
+	for(i = 0; i < LPC_CANAF->SFF_sa / 4; i++)
+	{
+		mask = LPC_CANAF_RAM->mask[i];
+		if(((mask & 0x7FF) == id) && ((mask & 0xE000) == ((0x7 & controller) << 13)))
+		{
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF;
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1);
+			
+			break;			
+		}
+		else if(((mask & 0x7FF0000) == (id << 16)) && ((mask & 0xE0000000) == ((0x7 & controller) << 29)))
+		{
+			LPC_CANAF_RAM->mask[i] |= 0xFFFF0000;
+			
+			/* Set AF in Normal Mode */
+			LPC_CANAF->AFMR &= ~(0x1);
+			
+			break;
+		}
+	}
+	
+	if(i == LPC_CANAF->SFF_sa / 4)
+	{
+		return -CAN_ERR_AF;
+	}
+	
+	if(LPC_CANAF_RAM->mask[i] == 0xFFFFFFFF)
+	{
+		/* Copy the IDs */
+		for(i = i + 1; i < LPC_CANAF->ENDofTable / 4; i++)
+		{
+			LPC_CANAF_RAM->mask[i - 1] = LPC_CANAF_RAM->mask[i];
+		}
+		
+		/* Decrease the starting address */
+		LPC_CANAF->SFF_sa = LPC_CANAF->SFF_sa - 4;
+		LPC_CANAF->SFF_GRP_sa = LPC_CANAF->SFF_GRP_sa - 4;
+		LPC_CANAF->EFF_sa = LPC_CANAF->EFF_sa - 4;
+		LPC_CANAF->EFF_GRP_sa = LPC_CANAF->EFF_GRP_sa - 4;
+		LPC_CANAF->ENDofTable = LPC_CANAF->ENDofTable - 4;
+	}
+	
+	/* Set AF in Normal Mode */
+	LPC_CANAF->AFMR &= ~(0x1);
+	
+	return CAN_OK;
 }
 
 /**
@@ -1549,6 +1737,8 @@ int CAN_AF_Add(const uint8_t controller, uint8_t type, const uint32_t startId, c
 	
 	switch(type)
 	{
+		case FullCAN: 
+			return FULLCAN_AF_Add(controller, (uint16_t)startId);
 		case STDID:
 			return CAN_AF_Add_StdID(controller, (uint16_t)startId);
 		case STDID_grp:
@@ -1582,6 +1772,8 @@ int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId
 	
 	switch(type)
 	{
+		case FullCAN: 
+			return FULLCAN_AF_Remove(controller, (uint16_t)startId);
 		case STDID:
 			return CAN_AF_Remove_StdID(controller, (uint16_t)startId);
 		case STDID_grp:
@@ -1594,8 +1786,55 @@ int CAN_AF_Remove(const uint8_t controller, uint8_t type, const uint32_t startId
 			return -CAN_ERR_AF;
 	}
 }
+
 /*---------------------------------------------------------------------------
 **                         End functions for AF
+**---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+**                       Init functions for FullCAN
+**---------------------------------------------------------------------------*/
+/**
+ * This function is used to activate the FullCAN mode
+ * Enabling this option will deactivate all extended ID AF entries and GRP entries
+ *
+ * @param void
+ *
+ * @return void
+ */
+void FullCAN_On(void)
+{
+	uint16_t i;
+	
+	for(i = LPC_CANAF->SFF_GRP_sa; i < LPC_CANAF->ENDofTable; i++)
+	{
+		LPC_CANAF_RAM->mask[i] = 0xFFFFFFFF;
+	}
+	
+	LPC_CANAF->EFF_sa = LPC_CANAF->SFF_GRP_sa;
+	LPC_CANAF->EFF_GRP_sa = LPC_CANAF->SFF_GRP_sa;
+	LPC_CANAF->ENDofTable = LPC_CANAF->SFF_GRP_sa;
+	
+	LPC_CANAF->AFMR |= 0x4;
+	
+}
+
+/**
+ * This function is used to deactivate the FullCAN mode
+ *
+ * @param void
+ *
+ * @return void
+ */
+void FullCAN_Off(void)
+{
+	LPC_CANAF->AFMR &= ~0x4;
+}
+
+
+
+/*---------------------------------------------------------------------------
+**                        End functions for FULLCAN
 **---------------------------------------------------------------------------*/
 
 /*****************************************************************************
